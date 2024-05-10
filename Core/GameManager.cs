@@ -1,14 +1,15 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using PlazmaGames.Core.Message;
 using PlazmaGames.Core.MonoSystem;
 using PlazmaGames.Core.Network;
+using PlazmaGames.Settings;
 
 namespace PlazmaGames.Core
 {
 	public abstract class GameManager : MonoBehaviour
 	{
-		private const string PrefabPath = "GameManager";
 		protected static GameManager _instance;
 
 		private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
@@ -63,7 +64,10 @@ namespace PlazmaGames.Core
 		{
 			if (_instance) return;
 
-			GameManager gameManagerPrefab = Resources.Load<GameManager>(PrefabPath);
+			PlazmaGamesSettings settings = PlazmaGamesSettings.GetOrCreateSettings();
+			string prefabPath = settings.GetSceneGameManagerNameOrDefault(SceneManager.GetActiveScene().name);
+
+            GameManager gameManagerPrefab = Resources.Load<GameManager>(prefabPath);
 			GameManager gameManager = Instantiate(gameManagerPrefab);
 
 			gameManager.name = gameManager.GetApplicationName();
