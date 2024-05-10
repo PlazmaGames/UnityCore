@@ -9,9 +9,10 @@ namespace PlazmaGames.Settings
 {
     public class PlazmaGamesSettings : ScriptableObject
     {
-        public const string pathToAsset = "Settings/PlazmaGamesSettings.asset";
+        public const string pathToAsset = "Settings/PlazmaGamesSettings";
         public const string pathToResources = "Assets/Resources/";
-        public static string path => pathToResources + pathToAsset;
+        public const string extension = ".asset";
+        public static string path => pathToResources + pathToAsset + extension;
 
         [SerializeField] private string _defaultGameManagerName;
         [SerializeField] private List<SceneSpecificGameManagerEntry> _sceneSpecificGameManagerEntries;
