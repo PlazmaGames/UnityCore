@@ -41,6 +41,7 @@ namespace PlazmaGames.Settings
             return settings;
         }
 
+#if UNITY_EDITOR
         public static void SaveSettings(SerializedObject so)
         {
             PlazmaGamesSettings settings = so.targetObject as PlazmaGamesSettings;
@@ -52,6 +53,7 @@ namespace PlazmaGames.Settings
         {
             return new SerializedObject(GetOrCreateSettings());
         }
+#endif
 
         public string GetDefaultGameManagerName() => _defaultGameManagerName;
 
