@@ -35,7 +35,6 @@ namespace PlazmaGames.Editor.Settings
             EditorGUILayout.PropertyField(_plazmaGamesSettings.FindProperty("_defaultGameManagerName"), Styles.defaultGameManagerName);
             EditorGUILayout.PropertyField(_plazmaGamesSettings.FindProperty("_sceneSpecificGameManagerEntries"), Styles.sceneSpecificGameManagers);
             _plazmaGamesSettings.ApplyModifiedProperties();
-            PlazmaGamesSettings.SaveSettings(_plazmaGamesSettings);
         }
 
         [SettingsProvider]

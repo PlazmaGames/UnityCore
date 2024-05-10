@@ -9,7 +9,7 @@ namespace PlazmaGames.Settings
 {
     public class PlazmaGamesSettings : ScriptableObject
     {
-        public static string path => Path.GetDirectoryName(Application.dataPath) + "/ProjectSettings/PlazmaGamesSettings.asset";
+        public static string path => "Assets/Resources/Settings/PlazmaGamesSettings.asset";
 
         [SerializeField] private string _defaultGameManagerName;
         [SerializeField] private List<SceneSpecificGameManagerEntry> _sceneSpecificGameManagerEntries;
@@ -19,18 +19,13 @@ namespace PlazmaGames.Settings
             settings._defaultGameManagerName = "GameManager";
             settings._sceneSpecificGameManagerEntries = new List<SceneSpecificGameManagerEntry>();
             Directory.CreateDirectory(Path.GetDirectoryName(path));
-            File.WriteAllText(path, JsonUtility.ToJson(settings));
+            AssetDatabase.CreateAsset(settings, path);
+            AssetDatabase.SaveAssets();
         }
 
         public static PlazmaGamesSettings GetOrCreateSettings()
         {
-            PlazmaGamesSettings settings = null;
-
-            if (File.Exists(path))
-            {
-                settings = ScriptableObject.CreateInstance<PlazmaGamesSettings>();
-                JsonUtility.FromJsonOverwrite(File.ReadAllText(path), settings);
-            }
+            PlazmaGamesSettings settings = AssetDatabase.LoadAssetAtPath<PlazmaGamesSettings>(path);
 
             if (settings == null)
             {
@@ -42,13 +37,6 @@ namespace PlazmaGames.Settings
         }
 
 #if UNITY_EDITOR
-        public static void SaveSettings(SerializedObject so)
-        {
-            PlazmaGamesSettings settings = so.targetObject as PlazmaGamesSettings;
-            Directory.CreateDirectory(Path.GetDirectoryName(path));
-            File.WriteAllText(path, JsonUtility.ToJson(settings));
-        }
-
         public static SerializedObject GetSerializedSettings()
         {
             return new SerializedObject(GetOrCreateSettings());
