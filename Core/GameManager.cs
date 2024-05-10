@@ -64,7 +64,7 @@ namespace PlazmaGames.Core
 		{
 			if (_instance) return;
 
-			PlazmaGamesSettings settings = PlazmaGamesSettings.GetOrCreateSettings();
+			PlazmaGamesSettings settings = PlazmaGamesSettings.GetSettings();
 			string prefabPath = settings.GetSceneGameManagerNameOrDefault(SceneManager.GetActiveScene().name);
 
             GameManager gameManagerPrefab = Resources.Load<GameManager>(prefabPath);

@@ -9,11 +9,14 @@ namespace PlazmaGames.Settings
 {
     public class PlazmaGamesSettings : ScriptableObject
     {
-        public static string path => "Assets/Resources/Settings/PlazmaGamesSettings.asset";
+        public const string pathToAsset = "Settings/PlazmaGamesSettings.asset";
+        public const string pathToResources = "Assets/Resources/";
+        public static string path => pathToResources + pathToAsset;
 
         [SerializeField] private string _defaultGameManagerName;
         [SerializeField] private List<SceneSpecificGameManagerEntry> _sceneSpecificGameManagerEntries;
 
+#if UNITY_EDITOR
         private static void Initialize(PlazmaGamesSettings settings)
         {
             settings._defaultGameManagerName = "GameManager";
@@ -36,12 +39,16 @@ namespace PlazmaGames.Settings
             return settings;
         }
 
-#if UNITY_EDITOR
         public static SerializedObject GetSerializedSettings()
         {
             return new SerializedObject(GetOrCreateSettings());
         }
 #endif
+
+        public static PlazmaGamesSettings GetSettings()
+        {
+            return Resources.Load<PlazmaGamesSettings>(pathToAsset);
+        }
 
         public string GetDefaultGameManagerName() => _defaultGameManagerName;
 
