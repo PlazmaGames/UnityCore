@@ -8,7 +8,7 @@ using PlazmaGames.Settings;
 
 namespace PlazmaGames.Core
 {
-	public abstract class GameManager : MonoBehaviour
+    public abstract class GameManager : MonoBehaviour
 	{
 		protected static GameManager _instance;
 
@@ -44,17 +44,17 @@ namespace PlazmaGames.Core
         /// <summary>
         /// Emit a network request of type TRequest.
         /// </summary>
-        public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet) where TRequest : System.Enum => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet);
+        public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet, int fromID = -1) where TRequest : System.Enum => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet, fromID);
 
         /// <summary>
         /// Attaches a callback linked to a network request of type TRequest.
         /// </summary>
-        public static void AddNetworkRequest<TRequest>(TRequest type, Action<PacketReader> callback) where TRequest : System.Enum => _instance._networkEmitter.Subscribe(Convert.ToInt32(type), callback);
+        public static void AddNetworkRequest<TRequest>(TRequest type, NetworkRequestAction callback) where TRequest : System.Enum => _instance._networkEmitter.Subscribe(Convert.ToInt32(type), callback);
 
         /// <summary>
         /// Removes a callback linked to a network request of type TRequest.
         /// </summary>
-        public static void RemoveNetworkRequest<TRequest>(TRequest type, Action<PacketReader> callback) where TRequest : System.Enum => _instance._networkEmitter.Unsubscribe(Convert.ToInt32(type), callback);
+        public static void RemoveNetworkRequest<TRequest>(TRequest type, NetworkRequestAction callback) where TRequest : System.Enum => _instance._networkEmitter.Unsubscribe(Convert.ToInt32(type), callback);
         
         /// <summary>
         /// Initialzes the GameManager automatically on scene load.

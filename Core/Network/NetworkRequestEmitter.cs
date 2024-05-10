@@ -4,23 +4,25 @@ using System.Linq;
 
 namespace PlazmaGames.Core.Network
 {
-	internal sealed class NetworkRequestEmitter
-	{
-		Dictionary<int, (List<PacketReader>, List<Action<PacketReader>>)> _events = new Dictionary<int, (List<PacketReader>, List<Action<PacketReader>>)>();
+    public delegate void NetworkRequestAction(PacketReader pr, int fromID = -1);
 
-        public void Emit(int type, PacketReader val)
+    internal sealed class NetworkRequestEmitter
+	{
+		Dictionary<int, (List<(PacketReader, int)>, List<NetworkRequestAction>)> _events = new Dictionary<int, (List<(PacketReader, int)>, List<NetworkRequestAction>)>();
+
+        public void Emit(int type, PacketReader val, int fromID)
 		{
 			if (!_events.ContainsKey(type)) return;
-			_events[type].Item1.Add(val);
+			_events[type].Item1.Add((val, fromID));
 		}
 
-		public void Subscribe(int type, Action<PacketReader> callback)
+		public void Subscribe(int type, NetworkRequestAction callback)
 		{
-			if (!_events.ContainsKey(type)) _events[type] = (new List<PacketReader>(), new List<Action<PacketReader>>());
+			if (!_events.ContainsKey(type)) _events[type] = (new List<(PacketReader, int)>(), new List<NetworkRequestAction>());
 			_events[type].Item2.Add(callback);
 		}
 
-		public void Unsubscribe(int type, Action<PacketReader> callback)
+		public void Unsubscribe(int type, NetworkRequestAction callback)
 		{
             if (!_events.ContainsKey(type)) return;
             _events[type].Item2.Remove(callback);
@@ -28,11 +30,11 @@ namespace PlazmaGames.Core.Network
 
 		public void CheckForRequest()
 		{
-            foreach ((List<PacketReader>, List<Action<PacketReader>>) data in _events.Values.ToList())
+            foreach ((List<(PacketReader, int)>, List<NetworkRequestAction>) data in _events.Values.ToList())
 			{
                 for (int i = data.Item1.Count - 1; i >= 0; i--)
                 {
-                    foreach (Action<PacketReader> act in data.Item2) act.Invoke(new PacketReader(data.Item1[i].GetPacket()));
+                    foreach (NetworkRequestAction act in data.Item2) act.Invoke(new PacketReader(data.Item1[i].Item1.GetPacket()), data.Item1[i].Item2);
                     data.Item1.RemoveAt(i);
                 }
             }
