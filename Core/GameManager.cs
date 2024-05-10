@@ -49,12 +49,12 @@ namespace PlazmaGames.Core
         /// <summary>
         /// Attaches a callback linked to a network request of type TRequest.
         /// </summary>
-        public static void AddNetworkRequest<TRequest>(TRequest type, NetworkRequestAction callback) where TRequest : System.Enum => _instance._networkEmitter.Subscribe(Convert.ToInt32(type), callback);
+        public static void AddNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : System.Enum => _instance._networkEmitter.Subscribe(Convert.ToInt32(type), callback);
 
         /// <summary>
         /// Removes a callback linked to a network request of type TRequest.
         /// </summary>
-        public static void RemoveNetworkRequest<TRequest>(TRequest type, NetworkRequestAction callback) where TRequest : System.Enum => _instance._networkEmitter.Unsubscribe(Convert.ToInt32(type), callback);
+        public static void RemoveNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : System.Enum => _instance._networkEmitter.Unsubscribe(Convert.ToInt32(type), callback);
         
         /// <summary>
         /// Initialzes the GameManager automatically on scene load.
