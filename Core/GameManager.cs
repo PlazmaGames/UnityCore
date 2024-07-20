@@ -8,12 +8,12 @@ using PlazmaGames.Settings;
 
 namespace PlazmaGames.Core
 {
-    public abstract class GameManager : MonoBehaviour
+	public abstract class GameManager : MonoBehaviour
 	{
 		protected static GameManager _instance;
 
 		private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
-        private readonly MessageManager _messageManager = new MessageManager();
+		private readonly MessageManager _messageManager = new MessageManager();
 		private readonly MonoSystemManager _monoSystemManager = new MonoSystemManager();
 
 		/// <summary>
@@ -41,33 +41,34 @@ namespace PlazmaGames.Core
 		/// </summary>
 		public static TMonoSystem GetMonoSystem<TMonoSystem>() => _instance._monoSystemManager.GetMonoSystem<TMonoSystem>();
 
-        /// <summary>
-        /// Emit a network request of type TRequest.
-        /// </summary>
-        public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet, int fromID = -1) where TRequest : System.Enum => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet, fromID);
+		/// <summary>
+		/// Emit a network request of type TRequest.
+		/// </summary>
+		public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet, int fromID = -1) where TRequest : System.Enum => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet, fromID);
 
-        /// <summary>
-        /// Attaches a callback linked to a network request of type TRequest.
-        /// </summary>
-        public static void AddNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : System.Enum => _instance._networkEmitter.Subscribe(Convert.ToInt32(type), callback);
+		/// <summary>
+		/// Attaches a callback linked to a network request of type TRequest.
+		/// </summary>
+		public static void AddNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : System.Enum => _instance._networkEmitter.Subscribe(Convert.ToInt32(type), callback);
 
-        /// <summary>
-        /// Removes a callback linked to a network request of type TRequest.
-        /// </summary>
-        public static void RemoveNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : System.Enum => _instance._networkEmitter.Unsubscribe(Convert.ToInt32(type), callback);
-        
-        /// <summary>
-        /// Initialzes the GameManager automatically on scene load.
-        /// </summary>
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+		/// <summary>
+		/// Removes a callback linked to a network request of type TRequest.
+		/// </summary>
+		public static void RemoveNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : System.Enum => _instance._networkEmitter.Unsubscribe(Convert.ToInt32(type), callback);
+		
+		/// <summary>
+		/// Initialzes the GameManager automatically on scene load.
+		/// </summary>
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		private static void Initialize()
 		{
 			if (_instance) return;
 
 			PlazmaGamesSettings settings = PlazmaGamesSettings.GetSettings();
-			string prefabPath = settings.GetSceneGameManagerNameOrDefault(SceneManager.GetActiveScene().name);
+//            string prefabPath = settings.GetSceneGameManagerNameOrDefault(SceneManager.GetActiveScene().name);
+			string prefabPath = "GameManager";
 
-            GameManager gameManagerPrefab = Resources.Load<GameManager>(prefabPath);
+			GameManager gameManagerPrefab = Resources.Load<GameManager>(prefabPath);
 			GameManager gameManager = Instantiate(gameManagerPrefab);
 
 			gameManager.name = gameManager.GetApplicationName();
@@ -89,9 +90,9 @@ namespace PlazmaGames.Core
 		/// </summary>
 		protected abstract void OnInitalized();
 
-        protected virtual void Update()
-        {
+		protected virtual void Update()
+		{
 			_networkEmitter.CheckForRequest();
-        }
-    }
+		}
+	}
 }
