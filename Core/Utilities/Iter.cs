@@ -18,7 +18,18 @@ namespace PlazmaGames.Core.Utils
 			foreach (T t in itbl) func(t, i++);
 		}
 
-		public static void Loop3D(Vector3Int range, Func<Vector3Int, bool> func)
+        public static void Loop2D(Vector2Int range, Func<Vector2Int, bool> func)
+        {
+            for (int y = 0; y < range.y; y++)
+            {
+                for (int x = 0; x < range.x; x++)
+                {
+                    if (!func(new Vector2Int(x, y))) return;
+                }
+            }
+        }
+
+        public static void Loop3D(Vector3Int range, Func<Vector3Int, bool> func)
 		{
 			for (int z = 0; z < range.z; z++)
 			{
