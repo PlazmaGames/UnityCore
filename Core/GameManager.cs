@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using PlazmaGames.Core.Message;
 using PlazmaGames.Core.MonoSystem;
 using PlazmaGames.Core.Network;
 using PlazmaGames.Settings;
+using PlazmaGames.Core.Events;
 
 namespace PlazmaGames.Core
 {
@@ -12,39 +12,39 @@ namespace PlazmaGames.Core
 	{
 		protected static GameManager _instance;
 
-		private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
-		private readonly MessageManager _messageManager = new MessageManager();
 		private readonly MonoSystemManager _monoSystemManager = new MonoSystemManager();
+        private readonly EventManager _eventManager = new EventManager();
+        private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
 
-		/// <summary>
-		/// Adds a listener for TMessage to the scene.
-		/// </summary>
-		public static void AddListener<TMessage>(Action<TMessage> listener) where TMessage : IMessage => _instance._messageManager.AddListener(listener);
-
-		/// <summary>
-		/// Removes a listener for TMessage to the scene.
-		/// </summary>
-		public static void RemoveListener<TMessage>(Action<TMessage> listener) where TMessage : IMessage => _instance._messageManager.RemoveListener(listener);
-
-		/// <summary>
-		/// Emits an message to the GameManager.
-		/// </summary>
-		public static void Emit<TMessage>(TMessage msg) where TMessage : IMessage => _instance._messageManager.Emit(msg);
-
-		/// <summary>
-		/// Add a MonoSystems to the GameManager. A MonoSystem takes the place of other singleton classes.
-		/// </summary>
-		public static void AddMonoSystem<TMonoSystem, TBindTo>(TMonoSystem monoSystem) where TMonoSystem : IMonoSystem, TBindTo => _instance._monoSystemManager.AddMonoSystem<TMonoSystem, TBindTo>(monoSystem);
+        /// <summary>
+        /// Add a MonoSystems to the GameManager. A MonoSystem takes the place of other singleton classes.
+        /// </summary>
+        public static void AddMonoSystem<TMonoSystem, TBindTo>(TMonoSystem monoSystem) where TMonoSystem : IMonoSystem, TBindTo => _instance._monoSystemManager.AddMonoSystem<TMonoSystem, TBindTo>(monoSystem);
 
 		/// <summary>
 		/// Fetches an attached MonoSystem of type TMonoSystem.
 		/// </summary>
 		public static TMonoSystem GetMonoSystem<TMonoSystem>() => _instance._monoSystemManager.GetMonoSystem<TMonoSystem>();
 
-		/// <summary>
-		/// Emit a network request of type TRequest.
-		/// </summary>
-		public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet, int fromID = -1) where TRequest : System.Enum => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet, fromID);
+        /// <summary>
+        /// Adds an event listener to an event of type TEvent
+        /// </summary>
+        public static void AddEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : System.Enum => _instance._eventManager.AddListener(Convert.ToInt32(eventType), listener);
+
+        /// <summary>
+        /// Removes an event listener to an event of type TEvent
+        /// </summary>
+        public static void RemoveEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : System.Enum => _instance._eventManager.RemoveListener(Convert.ToInt32(eventType), listener);
+
+        /// <summary>
+        /// Emits a game event of type TEvent.
+        /// </summary>
+        public static void EmitEvent<TEvent>(TEvent eventType, Component sender = null, object data = null) where TEvent : System.Enum => _instance._eventManager.Emit(Convert.ToInt32(eventType), sender, data);
+
+        /// <summary>
+        /// Emit a network request of type TRequest.
+        /// </summary>
+        public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet, int fromID = -1) where TRequest : System.Enum => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet, fromID);
 
 		/// <summary>
 		/// Attaches a callback linked to a network request of type TRequest.
@@ -65,7 +65,7 @@ namespace PlazmaGames.Core
 			if (_instance) return;
 
 			PlazmaGamesSettings settings = PlazmaGamesSettings.GetSettings();
-			string prefabPath = "GameManager";//settings.GetSceneGameManagerNameOrDefault(SceneManager.GetActiveScene().name);
+			string prefabPath = settings.GetSceneGameManagerNameOrDefault(SceneManager.GetActiveScene().name);
 
 			GameManager gameManagerPrefab = Resources.Load<GameManager>(prefabPath);
 			GameManager gameManager = Instantiate(gameManagerPrefab);

@@ -2,7 +2,7 @@
     "name": "PlazmaGamesCore",
     "rootNamespace": "PlazmaGames.Core",
     "references": [
-        "GUID:ab44afb389d78e841bb28422ce0a2831"
+        "GUID:578efba921b0add4286e0b4b91cd03fa"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
