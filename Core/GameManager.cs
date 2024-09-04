@@ -11,40 +11,40 @@ namespace PlazmaGames.Core
 	public abstract class GameManager : MonoBehaviour
 	{
 		protected static GameManager _instance;
-
+	
 		private readonly MonoSystemManager _monoSystemManager = new MonoSystemManager();
-        private readonly EventManager _eventManager = new EventManager();
-        private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
-
-        /// <summary>
-        /// Add a MonoSystems to the GameManager. A MonoSystem takes the place of other singleton classes.
-        /// </summary>
-        public static void AddMonoSystem<TMonoSystem, TBindTo>(TMonoSystem monoSystem) where TMonoSystem : IMonoSystem, TBindTo => _instance._monoSystemManager.AddMonoSystem<TMonoSystem, TBindTo>(monoSystem);
-
+	        private readonly EventManager _eventManager = new EventManager();
+	        private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
+	
+	        /// <summary>
+	        /// Add a MonoSystems to the GameManager. A MonoSystem takes the place of other singleton classes.
+	        /// </summary>
+	        public static void AddMonoSystem<TMonoSystem, TBindTo>(TMonoSystem monoSystem) where TMonoSystem : IMonoSystem, TBindTo => _instance._monoSystemManager.AddMonoSystem<TMonoSystem, TBindTo>(monoSystem);
+	
 		/// <summary>
 		/// Fetches an attached MonoSystem of type TMonoSystem.
 		/// </summary>
 		public static TMonoSystem GetMonoSystem<TMonoSystem>() => _instance._monoSystemManager.GetMonoSystem<TMonoSystem>();
-
-        /// <summary>
-        /// Adds an event listener to an event of type TEvent
-        /// </summary>
-        public static void AddEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : IComparable => _instance._eventManager.AddListener(Convert.ToInt32(eventType), listener);
-
-        /// <summary>
-        /// Removes an event listener to an event of type TEvent
-        /// </summary>
-        public static void RemoveEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : IComparable => _instance._eventManager.RemoveListener(Convert.ToInt32(eventType), listener);
-
-        /// <summary>
-        /// Emits a game event of type TEvent.
-        /// </summary>
-        public static void EmitEvent<TEvent>(TEvent eventType, Component sender = null, object data = null) where TEvent : IComparable => _instance._eventManager.Emit(Convert.ToInt32(eventType), sender, data);
-
-        /// <summary>
-        /// Emit a network request of type TRequest.
-        /// </summary>
-        public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet, int fromID = -1) where TRequest : IComparable => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet, fromID);
+	
+	        /// <summary>
+	        /// Adds an event listener to an event of type TEvent
+	        /// </summary>
+	        public static void AddEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : IComparable => _instance._eventManager.AddListener(Convert.ToInt32(eventType), listener);
+	
+	        /// <summary>
+	        /// Removes an event listener to an event of type TEvent
+	        /// </summary>
+	        public static void RemoveEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : IComparable => _instance._eventManager.RemoveListener(Convert.ToInt32(eventType), listener);
+	
+	        /// <summary>
+	        /// Emits a game event of type TEvent.
+	        /// </summary>
+	        public static void EmitEvent<TEvent>(TEvent eventType, Component sender = null, object data = null) where TEvent : IComparable => _instance._eventManager.Emit(Convert.ToInt32(eventType), sender, data);
+	
+	        /// <summary>
+	        /// Emit a network request of type TRequest.
+	        /// </summary>
+	        public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet, int fromID = -1) where TRequest : IComparable => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet, fromID);
 
 		/// <summary>
 		/// Attaches a callback linked to a network request of type TRequest.
