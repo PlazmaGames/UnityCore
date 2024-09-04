@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace PlazmaGames.Core.Utils
 {
-	public static class Iter
-	{
+	public sealed class IterUtilities
+    {
 		public static void ForEach<T>(IEnumerable<T> itbl, Action<T> func)
 		{
 			foreach (T t in itbl) func(t);
