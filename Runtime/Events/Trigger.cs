@@ -4,11 +4,12 @@ using UnityEngine;
 using PlazmaGames.Core.Events;
 using PlazmaGames.Core;
 using UnityEngine.EventSystems;
+using System;
 
 namespace PlazmaGames.Events
 {
     [RequireComponent(typeof(Collider), typeof(Rigidbody))]
-    public abstract class BaseTrigger<TEvent> : MonoBehaviour where TEvent : System.Enum
+    public abstract class BaseTrigger<TEvent> : MonoBehaviour where TEvent : IComparable
     {
         [Header("Settings")]
         [SerializeField] protected TEvent _eventType;

@@ -29,32 +29,32 @@ namespace PlazmaGames.Core
         /// <summary>
         /// Adds an event listener to an event of type TEvent
         /// </summary>
-        public static void AddEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : System.Enum => _instance._eventManager.AddListener(Convert.ToInt32(eventType), listener);
+        public static void AddEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : IComparable => _instance._eventManager.AddListener(Convert.ToInt32(eventType), listener);
 
         /// <summary>
         /// Removes an event listener to an event of type TEvent
         /// </summary>
-        public static void RemoveEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : System.Enum => _instance._eventManager.RemoveListener(Convert.ToInt32(eventType), listener);
+        public static void RemoveEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : IComparable => _instance._eventManager.RemoveListener(Convert.ToInt32(eventType), listener);
 
         /// <summary>
         /// Emits a game event of type TEvent.
         /// </summary>
-        public static void EmitEvent<TEvent>(TEvent eventType, Component sender = null, object data = null) where TEvent : System.Enum => _instance._eventManager.Emit(Convert.ToInt32(eventType), sender, data);
+        public static void EmitEvent<TEvent>(TEvent eventType, Component sender = null, object data = null) where TEvent : IComparable => _instance._eventManager.Emit(Convert.ToInt32(eventType), sender, data);
 
         /// <summary>
         /// Emit a network request of type TRequest.
         /// </summary>
-        public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet, int fromID = -1) where TRequest : System.Enum => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet, fromID);
+        public static void EmitNetworkRequest<TRequest>(TRequest type, PacketReader packet, int fromID = -1) where TRequest : IComparable => _instance._networkEmitter.Emit(Convert.ToInt32(type), packet, fromID);
 
 		/// <summary>
 		/// Attaches a callback linked to a network request of type TRequest.
 		/// </summary>
-		public static void AddNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : System.Enum => _instance._networkEmitter.Subscribe(Convert.ToInt32(type), callback);
+		public static void AddNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : IComparable => _instance._networkEmitter.Subscribe(Convert.ToInt32(type), callback);
 
 		/// <summary>
 		/// Removes a callback linked to a network request of type TRequest.
 		/// </summary>
-		public static void RemoveNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : System.Enum => _instance._networkEmitter.Unsubscribe(Convert.ToInt32(type), callback);
+		public static void RemoveNetworkRequest<TRequest>(TRequest type, Action<PacketReader, int> callback) where TRequest : IComparable => _instance._networkEmitter.Unsubscribe(Convert.ToInt32(type), callback);
 		
 		/// <summary>
 		/// Initialzes the GameManager automatically on scene load.
