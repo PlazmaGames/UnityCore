@@ -23,7 +23,7 @@ namespace PlazmaGames.ProGen.Sampling
     ///     
     /// Author(s): Colby O'Keefe
     /// </summary>
-    public class PoissonDiskSampler
+    public class PoissonSampler
     {
         private const int DIMENSION = 2; /* Spatial dimesnion. */
 
@@ -50,7 +50,7 @@ namespace PlazmaGames.ProGen.Sampling
         /// <param name="height">Each sample y-coord will be between [0, <paramref name="height"/>).</param>
         /// <param name="radius">Each sample will be at least <paramref name="radius"/> apart.</param>
         /// <param name="k">Maximum number of attempts before giving up on a sample. Recommend you leave at 30.</param>
-        public PoissonDiskSampler(float width, float height, float radius, int? seed = null, int k = 30)
+        public PoissonSampler(float width, float height, float radius, int? seed = null, int k = 30)
         {
             _originalState = Random.state;
             _seed = seed;
