@@ -23,7 +23,7 @@ namespace PlazmaGames.Core.Events
             }
         }
 
-        public void AddListener(int eventID, EventListener listener)
+        public void AddListener(int eventID, EventResponse listener)
         {
             if (!_events.ContainsKey(eventID))
             {
@@ -37,7 +37,7 @@ namespace PlazmaGames.Core.Events
             }
         }
 
-        public void RemoveListener(int eventID, EventListener listener)
+        public void RemoveListener(int eventID, EventResponse listener)
         {
             if (_events.ContainsKey(eventID)) 
             { 

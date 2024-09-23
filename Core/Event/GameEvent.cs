@@ -7,21 +7,21 @@ namespace PlazmaGames.Core.Events
 {
     public class GameEvent
     {
-        private IList<EventListener> _listeners = new List<EventListener>();
+        private IList<EventResponse> _listeners = new List<EventResponse>();
 
         public int ListenerCount { get => _listeners.Count; }
 
         public void Invoke(Component sender, object data)
         {
-            foreach (EventListener listener in _listeners.OrderBy(e => -e.priority)) listener.Invoke(sender, data);
+            foreach (EventResponse listener in _listeners.OrderBy(e => -e.priority)) listener.Invoke(sender, data);
         }
 
-        public void AddListener(EventListener listener)
+        public void AddListener(EventResponse listener)
         {
             _listeners.Add(listener);
         }
 
-        public void RemoveListener(EventListener listener)
+        public void RemoveListener(EventResponse listener)
         {
             if (_listeners.Contains(listener))
             {

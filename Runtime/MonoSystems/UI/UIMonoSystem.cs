@@ -44,7 +44,7 @@ namespace PlazmaGames.UI
             return null;
         }
 
-        private void Show(System.Type type, bool remeber = true, bool hideLastView = true)
+        public void Show(System.Type type, bool remeber = true, bool hideLastView = true)
         {
             if (_inTransition)
             {
@@ -70,13 +70,18 @@ namespace PlazmaGames.UI
 
         public void ShowWithTransition<TNext, TIntermediate>(Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true) where TNext : View where TIntermediate : View
         {
+            ShowWithTransition(typeof(TNext), typeof(TIntermediate), canTransitionCallback, remeber, hideLastView);
+        }
+
+        public void ShowWithTransition(System.Type nextViewType, System.Type transitionViewType, Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true)
+        {
             if (_inTransition) return;
 
             _viewBeforeTransition = (hideLastView) ? _currentView : null;
-            Show<TIntermediate>(remeber, false);
+            Show(transitionViewType, remeber, false);
             _inTransition = true;
             _canTransitionCallback = canTransitionCallback;
-            _nextViewAfterTransition = typeof(TNext);
+            _nextViewAfterTransition = nextViewType;
         }
 
         public void ShowLastWithTransition<TIntermediate>(Func<bool> canTransitionCallback, bool hideLastView = true) where TIntermediate : View

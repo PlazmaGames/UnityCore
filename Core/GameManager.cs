@@ -31,12 +31,12 @@ namespace PlazmaGames.Core
 		/// <summary>
 		/// Adds an event listener to an event of type TEvent
 		/// </summary>
-		public static void AddEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : IComparable => _instance._eventManager.AddListener(Convert.ToInt32(eventType), listener);
+		public static void AddEventListener<TEvent>(TEvent eventType, EventResponse listener) where TEvent : IComparable => _instance._eventManager.AddListener(Convert.ToInt32(eventType), listener);
 
 		/// <summary>
 		/// Removes an event listener to an event of type TEvent
 		/// </summary>
-		public static void RemoveEventListener<TEvent>(TEvent eventType, EventListener listener) where TEvent : IComparable => _instance._eventManager.RemoveListener(Convert.ToInt32(eventType), listener);
+		public static void RemoveEventListener<TEvent>(TEvent eventType, EventResponse listener) where TEvent : IComparable => _instance._eventManager.RemoveListener(Convert.ToInt32(eventType), listener);
 
 		/// <summary>
 		/// Emits a game event of type TEvent.

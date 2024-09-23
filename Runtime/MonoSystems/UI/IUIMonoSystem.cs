@@ -26,6 +26,8 @@ namespace PlazmaGames.UI
         /// </summary>
         public void Show<T>(bool remeber = true, bool hideLastView = true) where T : View;
 
+        public void Show(System.Type type, bool remeber = true, bool hideLastView = true);
+
         /// <summary>
         /// Displays a view of type TNext After a tranition to view of type TIntermediate. 
         /// THe transition to TNext will not take place untill the canTransitionCallback return true.
@@ -33,6 +35,7 @@ namespace PlazmaGames.UI
         /// to the history or not. 
         /// </summary>
         public void ShowWithTransition<TNext, TIntermediate>(Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true) where TNext : View where TIntermediate : View;
+        public void ShowWithTransition(System.Type nextViewType, System.Type transitionViewType, Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true);
 
         public void ShowLastWithTransition<TIntermediate>(Func<bool> canTransitionCallback, bool hideLastView = true) where TIntermediate : View;
 
