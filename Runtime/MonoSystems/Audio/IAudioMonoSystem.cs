@@ -47,10 +47,12 @@ namespace PlazmaGames.Audio
         /// </summary>
         public float GetMusicVolume();
 
-        public void PlayAudio(string name, AudioType audioType, bool allowOverlay);
+        public void PlayAudio(string name, AudioType audioType, bool loop = true, bool allowOverlay = true);
 
-        public void PlayAudio(int id, AudioType audioType, bool allowOverlay);
+        public void PlayAudio(int id, AudioType audioType, bool loop = true, bool allowOverlay = true);
 
         public void StopAudio(AudioType audioType);
+
+        public bool IsPlaying(AudioType audioType);
     }
 }

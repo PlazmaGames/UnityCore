@@ -1,9 +1,114 @@
 using System;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace PlazmaGames.Core.Utils
 {
+    public static class RectTransformExtension
+    {
+        private static int CountCornersVisibleFrom(this RectTransform rectTransform, Camera camera = null)
+        {
+            Rect screenBounds = new Rect(0f, 0f, Screen.width, Screen.height);
+            Vector3[] objectCorners = new Vector3[4];
+            rectTransform.GetWorldCorners(objectCorners);
+
+            int visibleCorners = 0;
+            Vector3 tempScreenSpaceCorner;
+            for (var i = 0; i < objectCorners.Length; i++)
+            {
+                if (camera != null)
+                    tempScreenSpaceCorner = camera.WorldToScreenPoint(objectCorners[i]);
+                else
+                {
+                    tempScreenSpaceCorner = objectCorners[i];
+                }
+
+                if (screenBounds.Contains(tempScreenSpaceCorner))
+                {
+                    visibleCorners++;
+                }
+            }
+            return visibleCorners;
+        }
+
+        public static bool IsFullyVisibleFrom(this RectTransform rectTransform, Camera camera = null)
+        {
+            if (!rectTransform.gameObject.activeInHierarchy)
+                return false;
+
+            return CountCornersVisibleFrom(rectTransform, camera) == 4;
+        }
+
+        public static bool IsVisibleFrom(this RectTransform rectTransform, Camera camera = null)
+        {
+            if (!rectTransform.gameObject.activeInHierarchy)
+                return false;
+
+            return CountCornersVisibleFrom(rectTransform, camera) > 0;
+        }
+    }
+
+    public static class DropdownUtilities
+    {
+        public static void SetDropdownOptions<T>(ref TMP_Dropdown dropdown, List<string> additional = null, List<T> ignore = null) where T : System.Enum
+        {
+            dropdown.ClearOptions();
+
+            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+
+            if (additional != null)
+            {
+                foreach (string val in additional)
+                {
+                    TMP_Dropdown.OptionData option = new TMP_Dropdown.OptionData();
+                    option.text = val;
+                    options.Add(option);
+                }
+            }
+
+            foreach (T val in System.Enum.GetValues(typeof(T)))
+            {
+                if (ignore != null && ignore.Contains(val)) continue;
+
+                TMP_Dropdown.OptionData option = new TMP_Dropdown.OptionData();
+                option.text = val.ToString();
+                options.Add(option);
+            }
+
+            dropdown.AddOptions(options);
+        }
+
+        public static void SetDropdownOptions<T>(ref Dropdown dropdown, List<string> additional = null, List<T> ignore = null) where T : System.Enum
+        {
+            dropdown.ClearOptions();
+
+            List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
+
+            if (additional != null)
+            {
+                foreach (string val in additional)
+                {
+                    Dropdown.OptionData option = new Dropdown.OptionData();
+                    option.text = val;
+                    options.Add(option);
+                }
+            }
+
+            foreach (T val in System.Enum.GetValues(typeof(T)))
+            {
+                if (ignore != null && ignore.Contains(val)) continue;
+
+                Dropdown.OptionData option = new Dropdown.OptionData();
+                option.text = val.ToString();
+                options.Add(option);
+            }
+
+            dropdown.AddOptions(options);
+        }
+    }
+
     public static class GridLayoutGroupUtilities
     {
         /// <summary>

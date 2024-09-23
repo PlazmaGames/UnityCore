@@ -25,9 +25,11 @@ namespace PlazmaGames.Audio
         [Header("Audio Clips/Sources")]
         [SerializeField] private List<AudioFile> _musicSounds;
         [SerializeField] private List<AudioFile> _ambientSounds;
+        [SerializeField] private List<AudioFile> _sfxSounds;
 
         [SerializeField] private AudioSource _musicSource;
         [SerializeField] private AudioSource _ambientSource;
+        [SerializeField] private AudioSource _sfxMainSource;
 
         [SerializeField] private List<AudioSource> _audioSources;
 
@@ -37,6 +39,7 @@ namespace PlazmaGames.Audio
         /// </summary>
         private void PlayMusic(AudioClip audio, float sound)
         {
+            if (_musicSource == null) return;
             _musicSource.volume = sound;
             _musicSource.clip = audio;
             _musicSource.Play();
@@ -48,16 +51,39 @@ namespace PlazmaGames.Audio
         /// </summary>
         private void PlayAmbient(AudioClip audio, float sound)
         {
+            if (_ambientSource == null) return;
             _ambientSource.volume = sound;
             _ambientSource.PlayOneShot(audio);
         }
 
         private void PlayAmbientLoop(AudioClip audio, float sound)
         {
+            if (_ambientSource == null) return;
             _ambientSource.volume = sound;
             _ambientSource.clip = audio;
             _ambientSource.loop = true;
             _ambientSource.Play();
+        }
+
+        private void PlaySfxLoop(AudioClip audio, float sound)
+        {
+            if (_sfxMainSource == null) return;
+            _sfxMainSource.volume = sound;
+            _sfxMainSource.clip = audio;
+            _sfxMainSource.loop = true;
+            _sfxMainSource.Play();
+        }
+
+
+        /// <summary>   
+        /// Private member that plays SfX sound given an audioclip and sound level between 0 and 1.
+        /// Multiple audio files can be played at once. 
+        /// </summary>
+        private void PlaySfx(AudioClip audio, float sound)
+        {
+            if (_sfxMainSource == null) return;
+            _sfxMainSource.volume = sound;
+            _sfxMainSource.PlayOneShot(audio);
         }
 
         /// <summary>   
@@ -83,22 +109,57 @@ namespace PlazmaGames.Audio
         /// <summary>   
         /// Finds and plays a SfX sound with a given name if such an Audio file exist.
         /// </summary>
-        private void PlayAmbient(string name, bool allowOverlay = true)
+        private void PlayAmbient(string name, bool allowOverlay = true, bool loop = true)
         {
             AudioFile sfx = _ambientSounds.Find(e => name.CompareTo(e.name) == 0);
             if (sfx == null) return;
-            if (!(!allowOverlay && _ambientSource.isPlaying)) PlayAmbient(sfx.audio, _overallSound * _sfxSound);
+            if (!(!allowOverlay && _ambientSource.isPlaying))
+            {
+                if (!loop) PlayAmbient(sfx.audio, _overallSound * _sfxSound);
+                else PlayAmbientLoop(sfx.audio, _overallSound * _ambientSound);
+            }
         }
 
         /// <summary>   
         /// Finds and plays a SfX sound with a given an id if such an Audio file exist.
         /// </summary>
-        private void PlayAmbient(int id, bool loop = true)
+        private void PlayAmbient(int id, bool allowOverlay = true, bool loop = true)
         {
             AudioFile sfx = _ambientSounds.Find(e => id == e.id);
             if (sfx == null) return;
-            if (!loop) PlayAmbient(sfx.audio, _overallSound * _sfxSound);
-            else PlayAmbientLoop(sfx.audio, _overallSound * _ambientSound);
+            if (!(!allowOverlay && _ambientSource.isPlaying))
+            {
+                if (!loop) PlayAmbient(sfx.audio, _overallSound * _sfxSound);
+                else PlayAmbientLoop(sfx.audio, _overallSound * _ambientSound);
+            }
+        }
+
+        /// <summary>   
+        /// Finds and plays a SfX sound with a given name if such an Audio file exist.
+        /// </summary>
+        private void PlaySfx(string name, bool allowOverlay = true, bool loop = true)
+        {
+            AudioFile sfx = _sfxSounds.Find(e => name.CompareTo(e.name) == 0);
+            if (sfx == null) return;
+            if (!(!allowOverlay && _sfxMainSource.isPlaying))
+            {
+                if (!loop) PlaySfx(sfx.audio, _overallSound * _sfxSound);
+                else PlaySfxLoop(sfx.audio, _overallSound * _sfxSound);
+            }
+        }
+
+        /// <summary>   
+        /// Finds and plays a SfX sound with a given an id if such an Audio file exist.
+        /// </summary>
+        private void PlaySfx(int id, bool allowOverlay = true, bool loop = true)
+        {
+            AudioFile sfx = _sfxSounds.Find(e => id == e.id);
+            if (sfx == null) return;
+            if (!(!allowOverlay && _sfxMainSource.isPlaying))
+            {
+                if (!loop) PlaySfx(sfx.audio, _overallSound * _sfxSound);
+                else PlaySfxLoop(sfx.audio, _overallSound * _sfxSound);
+            }
         }
 
         /// <summary>
@@ -114,7 +175,12 @@ namespace PlazmaGames.Audio
             _musicSource.Stop();
         }
 
-        public void PlayAudio(string name, AudioType audioType, bool loop = true)
+        private void StopSfx()
+        {
+            _sfxMainSource.Stop();
+        }
+
+        public void PlayAudio(string name, AudioType audioType, bool loop = true, bool allowOverlay = true)
         {
             switch (audioType)
             {
@@ -122,7 +188,10 @@ namespace PlazmaGames.Audio
                     PlayMusic(name);
                     break;
                 case AudioType.Ambient:
-                    PlayAmbient(name, loop);
+                    PlayAmbient(name, allowOverlay, loop);
+                    break;
+                case AudioType.Sfx:
+                    PlaySfx(name, allowOverlay, loop);
                     break;
                 default:
                     Debug.LogWarning($"{audioType} is not a vaild Audio Type.");
@@ -130,7 +199,7 @@ namespace PlazmaGames.Audio
             }
         }
 
-        public void PlayAudio(int id, AudioType audioType, bool loop = true)
+        public void PlayAudio(int id, AudioType audioType, bool loop = true, bool allowOverlay = true)
         {
             switch (audioType)
             {
@@ -138,7 +207,10 @@ namespace PlazmaGames.Audio
                     PlayMusic(id);
                     break;
                 case AudioType.Ambient:
-                    PlayAmbient(id, loop);
+                    PlayAmbient(id, allowOverlay, loop);
+                    break;
+                case AudioType.Sfx:
+                    PlaySfx(id, allowOverlay, loop);
                     break;
                 default:
                     Debug.LogWarning($"{audioType} is not a vaild Audio Type.");
@@ -155,6 +227,9 @@ namespace PlazmaGames.Audio
                     break;
                 case AudioType.Ambient:
                     StopAmbient();
+                    break;
+                case AudioType.Sfx:
+                    StopSfx();
                     break;
                 default:
                     Debug.LogWarning($"{audioType} is not a vaild Audio Type.");
@@ -208,6 +283,21 @@ namespace PlazmaGames.Audio
         public float GetAmbientVolume()
         {
             return _ambientSound;
+        }
+
+        public bool IsPlaying(AudioType audioType)
+        {
+            switch (audioType)
+            {
+                case AudioType.Music:
+                    return _musicSource.isPlaying;
+                case AudioType.Ambient:
+                    return _ambientSource.isPlaying;
+                case AudioType.Sfx:
+                    return _sfxMainSource.isPlaying;
+                default:
+                    return false;
+            }
         }
 
         private void Start()

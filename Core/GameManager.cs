@@ -10,16 +10,18 @@ namespace PlazmaGames.Core
 {
 	public abstract class GameManager : MonoBehaviour
 	{
-		protected static GameManager _instance;
+        protected static GameManager _instance;
 
 		private readonly MonoSystemManager _monoSystemManager = new MonoSystemManager();
 		private readonly EventManager _eventManager = new EventManager();
 		private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
 
-		/// <summary>
-		/// Add a MonoSystems to the GameManager. A MonoSystem takes the place of other singleton classes.
-		/// </summary>
-		public static void AddMonoSystem<TMonoSystem, TBindTo>(TMonoSystem monoSystem) where TMonoSystem : IMonoSystem, TBindTo => _instance._monoSystemManager.AddMonoSystem<TMonoSystem, TBindTo>(monoSystem);
+        public static GameManager Instance { get => _instance; }
+
+        /// <summary>
+        /// Add a MonoSystems to the GameManager. A MonoSystem takes the place of other singleton classes.
+        /// </summary>
+        public static void AddMonoSystem<TMonoSystem, TBindTo>(TMonoSystem monoSystem) where TMonoSystem : IMonoSystem, TBindTo => _instance._monoSystemManager.AddMonoSystem<TMonoSystem, TBindTo>(monoSystem);
 
 		/// <summary>
 		/// Fetches an attached MonoSystem of type TMonoSystem.
@@ -79,15 +81,21 @@ namespace PlazmaGames.Core
 			gameManager.OnInitalized();
 		}
 
-		/// <summary>
-		/// Fetches the name of the application.
-		/// </summary>
-		protected abstract string GetApplicationName();
+        /// <summary>
+        /// Fetches the name of the application.
+        /// </summary>
+        public abstract string GetApplicationName();
 
-		/// <summary>
-		/// Function to be ran after the GameManager is Initalized.
-		/// </summary>
-		protected abstract void OnInitalized();
+        /// <summary>
+        /// Fetches the version of the application.
+        /// </summary>
+        public abstract string GetApplicationVersion();
+
+        /// <summary>
+        /// <summary>
+        /// Function to be ran after the GameManager is Initalized.
+        /// </summary>
+        protected abstract void OnInitalized();
 
 		protected virtual void Update()
 		{

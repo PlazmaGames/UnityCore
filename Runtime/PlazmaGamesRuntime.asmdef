@@ -1,5 +1,5 @@
 {
-    "name": "PlazmaGamesRuntime",
+    "name": "PlazmaGames.Runtime",
     "rootNamespace": "",
     "references": [
         "GUID:cf48d289e241b3344b277dd6cb107c5c",

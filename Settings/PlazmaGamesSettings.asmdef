@@ -1,5 +1,5 @@
 {
-    "name": "PlazmaGamesSettings",
+    "name": "PlazmaGames.Settings",
     "rootNamespace": "PlazmaGames.Settings",
     "references": [],
     "includePlatforms": [],

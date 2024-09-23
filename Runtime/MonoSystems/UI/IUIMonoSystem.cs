@@ -1,4 +1,5 @@
 using PlazmaGames.Core.MonoSystem;
+using System;
 
 namespace PlazmaGames.UI
 {
@@ -23,7 +24,17 @@ namespace PlazmaGames.UI
         /// Displays a view of type T. Remeber parameter indicates if to add the view
         /// to the history or not. 
         /// </summary>
-        public void Show<T>(bool remeber = true) where T : View;
+        public void Show<T>(bool remeber = true, bool hideLastView = true) where T : View;
+
+        /// <summary>
+        /// Displays a view of type TNext After a tranition to view of type TIntermediate. 
+        /// THe transition to TNext will not take place untill the canTransitionCallback return true.
+        /// Remeber parameter indicates if to add the view
+        /// to the history or not. 
+        /// </summary>
+        public void ShowWithTransition<TNext, TIntermediate>(Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true) where TNext : View where TIntermediate : View;
+
+        public void ShowLastWithTransition<TIntermediate>(Func<bool> canTransitionCallback, bool hideLastView = true) where TIntermediate : View;
 
         /// <summary>
         /// Displays the last view in the history
@@ -39,5 +50,9 @@ namespace PlazmaGames.UI
         /// Shows all Views.
         /// </summary>
         public void ShowAllViews();
+
+        public bool IsInTransition();
+
+        public void ClearHistory();
     }
 }

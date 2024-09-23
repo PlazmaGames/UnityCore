@@ -1,5 +1,5 @@
 {
-    "name": "PlazmaGamesEditor",
+    "name": "PlazmaGames.Editor",
     "rootNamespace": "PlazmaGames.Editor",
     "references": [
         "GUID:578efba921b0add4286e0b4b91cd03fa",

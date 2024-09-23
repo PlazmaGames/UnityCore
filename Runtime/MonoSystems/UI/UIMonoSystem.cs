@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using PlazmaGames.Attribute;
+using UnityEngine.Events;
 
 namespace PlazmaGames.UI
 {
@@ -13,6 +14,11 @@ namespace PlazmaGames.UI
 
         private View _currentView;
         private readonly Stack<View> _history = new();
+
+        private bool _inTransition;
+        private Func<bool> _canTransitionCallback;
+        private System.Type _nextViewAfterTransition;
+        private View _viewBeforeTransition;
 
         public bool GetCurrentViewIs<T>() where T : View
         {
@@ -38,8 +44,14 @@ namespace PlazmaGames.UI
             return null;
         }
 
-        private void Show(System.Type type, bool remeber = true)
+        private void Show(System.Type type, bool remeber = true, bool hideLastView = true)
         {
+            if (_inTransition)
+            {
+                Debug.LogWarning("Cannot Change View During a Transition.");
+                return;
+            }
+
             foreach (View view in _views)
             {
                 if (view.GetType().Equals(type))
@@ -47,7 +59,7 @@ namespace PlazmaGames.UI
                     if (_currentView != null)
                     {
                         if (remeber) _history.Push(_currentView);
-                        _currentView.Hide();
+                        if (hideLastView) _currentView.Hide();
                     }
 
                     view.Show();
@@ -56,9 +68,31 @@ namespace PlazmaGames.UI
             }
         }
 
-        public void Show<T>(bool remeber = true) where T : View
+        public void ShowWithTransition<TNext, TIntermediate>(Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true) where TNext : View where TIntermediate : View
         {
-            Show(typeof(T), remeber);
+            if (_inTransition) return;
+
+            _viewBeforeTransition = (hideLastView) ? _currentView : null;
+            Show<TIntermediate>(remeber, false);
+            _inTransition = true;
+            _canTransitionCallback = canTransitionCallback;
+            _nextViewAfterTransition = typeof(TNext);
+        }
+
+        public void ShowLastWithTransition<TIntermediate>(Func<bool> canTransitionCallback, bool hideLastView = true) where TIntermediate : View
+        {
+            if (_inTransition) return;
+
+            _viewBeforeTransition = (hideLastView) ? _currentView : null;
+            Show<TIntermediate>(false, false);
+            _inTransition = true;
+            _canTransitionCallback = canTransitionCallback;
+            _nextViewAfterTransition = null;
+        }
+
+        public void Show<T>(bool remeber = true, bool hideLastView = true) where T : View
+        {
+            Show(typeof(T), remeber, hideLastView);
         }
 
         /// <summary>
@@ -99,6 +133,16 @@ namespace PlazmaGames.UI
             foreach (View view in _views) view.Show();
         }
 
+        public bool IsInTransition()
+        {
+            return _inTransition;
+        }
+
+        public void ClearHistory()
+        {
+            _history.Clear();
+        }
+
         private void Init()
         {
             View[] viewStilActive = _views.Where(e => e != null).ToArray();
@@ -117,6 +161,21 @@ namespace PlazmaGames.UI
         private void Start()
         {
             Init();
+        }
+
+        private void Update()
+        {
+            if (_inTransition  && (_canTransitionCallback == null || _canTransitionCallback.Invoke()))
+            {
+                _inTransition = false;
+                HideAllViews();
+                if (_viewBeforeTransition != null) _viewBeforeTransition.Hide();
+                if (_nextViewAfterTransition != null) Show(_nextViewAfterTransition, false, true);
+                else ShowLast();
+                _viewBeforeTransition = null;
+                _canTransitionCallback = null;
+                _nextViewAfterTransition = null;
+            }
         }
     }
 }
