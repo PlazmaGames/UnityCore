@@ -12,11 +12,15 @@ namespace PlazmaGames.Core
 	{
         protected static GameManager _instance;
 
-		private readonly MonoSystemManager _monoSystemManager = new MonoSystemManager();
-		private readonly EventManager _eventManager = new EventManager();
-		private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
+        private readonly MonoSystemManager _monoSystemManager = new MonoSystemManager();
+        private readonly EventManager _eventManager = new EventManager();
+        private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
+
+        [Header("Developer Settings")]
+        [SerializeField] protected bool _debug;
 
         public static GameManager Instance { get => _instance; }
+        public static bool InDebugMode { get => _instance._debug; }
 
         /// <summary>
         /// Add a MonoSystems to the GameManager. A MonoSystem takes the place of other singleton classes.

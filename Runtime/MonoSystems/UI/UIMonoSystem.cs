@@ -12,7 +12,7 @@ namespace PlazmaGames.UI
         [SerializeField, View] private string _startingView;
         [SerializeField] private View[] _views;
 
-        private View _currentView;
+        [SerializeField, ReadOnly] private View _currentView;
         private readonly Stack<View> _history = new();
 
         private bool _inTransition;

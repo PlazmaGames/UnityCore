@@ -8,9 +8,19 @@ namespace PlazmaGames.SO
 {
     public abstract class SODatabase<TBase> : ScriptableObject where TBase : BaseSO
     {
+        [Header("Settings")]
+        [SerializeField] private bool _useRawSO = false;
+        
+        [Header("Database")]
         [SerializeField] protected List<TBase> _database;
         [SerializeField, InspectorButton("InitDatabase")] protected bool _initDatabase;
         [SerializeField, InspectorButton("ClearDatabase")] protected bool _clearDatabase;
+
+        private void AddItem(TBase so)
+        {
+            if (_useRawSO) _database.Add(so);
+            else _database.Add(ScriptableObject.Instantiate(so));
+        }
 
         [ContextMenu(itemName: "Init Database")]
         public void InitDatabase()
@@ -28,20 +38,20 @@ namespace PlazmaGames.SO
             {
                 TBase newTBase;
                 newTBase = hasIDInRange.Find(e => e.id == i);
-                if (newTBase != null) _database.Add(newTBase);
+                if (newTBase != null) AddItem(newTBase);
                 else if (index < noID.Count)
                 {
                     noID[index].id = i;
                     newTBase = noID[index];
                     index++;
-                    _database.Add(newTBase);
+                    AddItem(newTBase);
                 }
             }
 
             foreach (TBase item in hasIDNotInRange)
             {
                 item.id = _database.Count;
-                _database.Add(item);
+                AddItem(item);
             }
         }
 
