@@ -6,9 +6,9 @@ namespace PlazmaGames.Core.Events
 {
     public class EventManager
     {
-        private IDictionary<int, GameEvent> _events = new Dictionary<int, GameEvent>();
+        private IDictionary<string, GameEvent> _events = new Dictionary<string, GameEvent>();
 
-        public void Emit(int eventID, Component sender = null, object data = null)
+        public void Emit(string eventID, Component sender = null, object data = null)
         {
             try
             {
@@ -23,7 +23,7 @@ namespace PlazmaGames.Core.Events
             }
         }
 
-        public void AddListener(int eventID, EventResponse listener)
+        public void AddListener(string eventID, EventResponse listener)
         {
             if (!_events.ContainsKey(eventID))
             {
@@ -37,7 +37,7 @@ namespace PlazmaGames.Core.Events
             }
         }
 
-        public void RemoveListener(int eventID, EventResponse listener)
+        public void RemoveListener(string eventID, EventResponse listener)
         {
             if (_events.ContainsKey(eventID)) 
             { 
