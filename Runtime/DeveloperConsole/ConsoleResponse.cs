@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace PlazmaGames.Console
 
         public ConsoleResponse(string msg, ResponseType type)
         {
-            Message = msg;
+            Message = msg.TrimEnd(Environment.NewLine.ToCharArray());
             Type = type;
             MessageColor = GetMessageColor();
         }
