@@ -9,7 +9,7 @@ namespace PlazmaGames.SO
     public abstract class SODatabase<TBase> : ScriptableObject where TBase : BaseSO
     {
         [Header("Settings")]
-        [SerializeField] private bool _useRawSO = false;
+        [SerializeField] private bool _useRawSO = true;
         
         [Header("Database")]
         [SerializeField] protected List<TBase> _database;
