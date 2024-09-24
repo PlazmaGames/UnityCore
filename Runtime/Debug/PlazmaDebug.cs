@@ -8,7 +8,7 @@ namespace PlazmaGames.Debugging
     {
         private static string ConstructLog(string msg, string quilfier = "", Color? color = null)
         {
-            return (color == null) ? $"{quilfier}: {msg}" : $"<color={ColorUtility.ToHtmlStringRGBA(color ?? Color.white)}>{quilfier}:</color>: {msg}";
+            return (color == null) ? $"{quilfier}: {msg}" : $"<color=#{ColorUtility.ToHtmlStringRGBA(color ?? Color.white)}>{quilfier}:</color>: {msg}";
         }
 
         public static void Log(string msg, string quilfier = "", Color? color = null)

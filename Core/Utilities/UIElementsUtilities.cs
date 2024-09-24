@@ -6,6 +6,35 @@ using UnityEngine.UI;
 
 namespace PlazmaGames.Core.Utils
 {
+    public static class ContentFitterUtilities
+    {
+        public static void RefreshContentFitter(RectTransform transform)
+        {
+            if (transform == null || !transform.gameObject.activeSelf)
+            {
+                return;
+            }
+
+            foreach (RectTransform child in transform)
+            {
+                RefreshContentFitter(child);
+            }
+
+            LayoutGroup layoutGroup = transform.GetComponent<LayoutGroup>();
+            ContentSizeFitter contentSizeFitter = transform.GetComponent<ContentSizeFitter>();
+            if (layoutGroup != null)
+            {
+                layoutGroup.SetLayoutHorizontal();
+                layoutGroup.SetLayoutVertical();
+            }
+
+            if (contentSizeFitter != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(transform);
+            }
+        }
+    }
+
     public static class RectTransformExtension
     {
         private static int CountCornersVisibleFrom(this RectTransform rectTransform, Camera camera = null)

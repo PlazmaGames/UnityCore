@@ -18,7 +18,7 @@ namespace PlazmaGames.Animation
 		{
 			if (request.coroutine != null)
 			{
-				request.value.StopCoroutine(request.coroutine);
+				if (request.value != null) request.value.StopCoroutine(request.coroutine);
 				request.coroutine = null;
 			}
 		}
