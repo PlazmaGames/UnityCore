@@ -7,6 +7,7 @@ using PlazmaGames.Core.Debugging;
 
 #if !DISABLE_STEAMWORKS
 using Steamworks;
+using System;
 #endif
 
 namespace PlazmaGames.Steam
@@ -25,47 +26,109 @@ namespace PlazmaGames.Steam
         [Header("Steam App Infomation")]
         private SteamAPIWarningMessageHook_t _steamAPIWarningMessageHook;
 
-        private bool IsAchievementVaild(string achievementID)
+        private bool CheckAvailabilityOfSteamAchievementAndStat()
         {
             if (!SteamUserStats.RequestCurrentStats())
             {
-                PlazmaDebug.LogWarning($"Failed to fetch steam achevement {achievementID}. No user is logged in.", "Steamworks");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsAchievementVaild(string achievementID, bool ignoreCompleteFlag = false)
+        {
+            if (!CheckAvailabilityOfSteamAchievementAndStat())
+            {
+                PlazmaDebug.LogWarning($"Failed to fetch steam achevement {achievementID}. No user is logged in.", "Steamworks", 1);
                 return false;
             }
 
             bool doesAchievementExist = SteamUserStats.GetAchievement(achievementID, out bool hasCompleted);
 
-            if (hasCompleted) return false;
-
             if (!doesAchievementExist)
             {
-                PlazmaDebug.LogWarning($"Failed to fetch steam achevement {achievementID}.", "Steamworks");
+                PlazmaDebug.LogWarning($"Failed to fetch steam achevement {achievementID}.", "Steamworks", 1);
                 return false;
             }
 
-            return !hasCompleted;
+            return !hasCompleted || ignoreCompleteFlag;
         }
 
-        public void SetAchievementProgress(string achievementID, int progress)
+        private bool IsStatVaild(string statID, object next, SteamStatType type)
         {
-            if (!IsSteamAvivable || !IsAchievementVaild(achievementID)) return;
+            if (!CheckAvailabilityOfSteamAchievementAndStat())
+            {
+                PlazmaDebug.LogWarning($"Failed to fetch steam stat {statID}. No user is logged in.", "Steamworks", 1);
+                return false;
+            }
 
-            bool successful = SteamUserStats.SetStat(achievementID, progress);
+            int currentI = -1;
+            float currentF = -1;
+            bool doesStatExist = (type == SteamStatType.INTEGER) ? SteamUserStats.GetStat(statID, out currentI) : SteamUserStats.GetStat(statID, out currentF);
+
+            if (!doesStatExist)
+            {
+                PlazmaDebug.LogWarning($"Failed to fetch steam stat {statID}.", "Steamworks", 1);
+                return false;
+            }
+
+            if (currentI > Convert.ToInt32(next) || currentF > Convert.ToSingle(next))
+            {
+                PlazmaDebug.LogWarning($"Trying to update a stat to less than it's current value. Ingoring request.", "Steamworks", 2);
+                return false;
+            }
+
+            return true;
+        }
+
+        public void SetStatProgress(string statID, object progress, SteamStatType type)
+        {
+            PlazmaDebug.Log($"Attemping to set {statID}'s progress to {progress}.", "Steamworks", Color.green, 2);
+            if (!IsSteamAvivable || !IsStatVaild(statID, progress, type)) return;
+
+            bool successful = (type == SteamStatType.INTEGER) ? SteamUserStats.SetStat(statID,Convert.ToInt32(progress)) : SteamUserStats.SetStat(statID, Convert.ToSingle(progress));
             successful &= SteamUserStats.StoreStats();
 
-            if (successful) PlazmaDebug.Log($"Suscessfully updated {achievementID} stats.", "Steamworks", Color.green);
-            else PlazmaDebug.LogWarning($"Failed to update {achievementID} stats.", "Steamworks");
+            if (successful) PlazmaDebug.Log($"Suscessfully updated {statID} stats.", "Steamworks", Color.green, 1);
+            else PlazmaDebug.LogWarning($"Failed to update {statID} stats of type {type} to {progress}.", "Steamworks", 1);
         }
 
         public void SetAchievementAsCompleted(string achievementID)
         {
+            PlazmaDebug.Log($"Attemping to mark {achievementID} as complete.", "Steamworks", Color.green, 2);
             if (!IsSteamAvivable || !IsAchievementVaild(achievementID)) return;
 
             bool successful = SteamUserStats.SetAchievement(achievementID);
             successful &= SteamUserStats.StoreStats();
 
-            if (successful) PlazmaDebug.Log($"Suscessfully marked {achievementID} as compelte.", "Steamworks", Color.green);
-            else PlazmaDebug.LogWarning($"Failed to marked {achievementID} as compelte.", "Steamworks");
+            if (successful) PlazmaDebug.Log($"Suscessfully marked {achievementID} as compelete.", "Steamworks", Color.green, 1);
+            else PlazmaDebug.LogWarning($"Failed to marked {achievementID} as compelete.", "Steamworks", 1);
+        }
+
+        public void SetAchievementAsIncompleted(string achievementID)
+        {
+            PlazmaDebug.Log($"Attemping to mark {achievementID} as incomplete.", "Steamworks", Color.green, 2);
+            if (!IsSteamAvivable || !IsAchievementVaild(achievementID, true)) return;
+
+            bool successful = SteamUserStats.ClearAchievement(achievementID);
+            successful &= SteamUserStats.StoreStats();
+
+            if (successful) PlazmaDebug.Log($"Suscessfully marked {achievementID} as incompelete.", "Steamworks", Color.green, 1);
+            else PlazmaDebug.LogWarning($"Failed to marked {achievementID} as incompelete.", "Steamworks", 1);
+        }
+
+        public void ClearAllStats(bool removeAchieveemnts = true)
+        {
+            string achieveemntsMSG = (removeAchieveemnts) ? " and achievements" : string.Empty;
+            PlazmaDebug.Log($"Attemping to remove all stats{achieveemntsMSG}.", "Steamworks", Color.green, 2);
+            if (!IsSteamAvivable || !CheckAvailabilityOfSteamAchievementAndStat()) return;
+
+            bool successful = SteamUserStats.ResetAllStats(removeAchieveemnts);
+            successful &= SteamUserStats.StoreStats();
+
+            if (successful) PlazmaDebug.Log($"Suscessfully remove all stats{achieveemntsMSG}.", "Steamworks", Color.green, 1);
+            else PlazmaDebug.LogWarning($"Failed to remove all stats{achieveemntsMSG}.", "Steamworks", 1);
         }
 
         [AOT.MonoPInvokeCallback(typeof(SteamAPIWarningMessageHook_t))]
@@ -76,6 +139,7 @@ namespace PlazmaGames.Steam
 
         private void InitializeSteam()
         {
+            PlazmaDebug.Log($"Initialize Steam.", "Steamworks", Color.green, 2);
             IsInitalized = SteamAPI.Init();
             if (!IsInitalized)
             {

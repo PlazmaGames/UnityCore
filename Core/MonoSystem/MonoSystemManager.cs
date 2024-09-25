@@ -1,3 +1,4 @@
+using PlazmaGames.Core.Debugging;
 using System;
 using System.Collections.Generic;
 
@@ -25,7 +26,12 @@ namespace PlazmaGames.Core.MonoSystem
             Type monoSystemType = typeof(TMonoSystem);
 
             if (_monoSystems.TryGetValue(monoSystemType, out var monoSystem)) return (TMonoSystem)monoSystem;
-            else throw new Exception($"MonoSystem {monoSystemType} does not exist");
+            else
+            {
+                Exception e = new Exception($"MonoSystem {monoSystemType} does not exist");
+                PlazmaDebug.LogExpection(e, $"MonoSystem {monoSystemType} does not exist", "MonoSystem");
+                throw e;
+            }
         }
     }
 }
