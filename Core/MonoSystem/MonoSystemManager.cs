@@ -33,5 +33,14 @@ namespace PlazmaGames.Core.MonoSystem
                 throw e;
             }
         }
+
+        /// <summary>
+        /// Checks if a MonoSystem is attached.
+        /// </summary>
+        public bool HasMonoSystem<TMonoSystem>()
+        {
+            Type monoSystemType = typeof(TMonoSystem);
+            return _monoSystems.ContainsKey(monoSystemType);
+        }
     }
 }

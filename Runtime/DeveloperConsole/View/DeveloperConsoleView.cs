@@ -110,8 +110,8 @@ namespace PlazmaGames.UI.Views
         /// </summary>
         private void ProcessCommand(string val)
         {
-            ConsoleResponse msg = _console.ProcessCommand(val);
             PrintToCommandWindow(val);
+            ConsoleResponse msg = _console.ProcessCommand(val);
             if (_commandHistory.Count == 0 || !_commandHistory[^1].Equals(val, System.StringComparison.OrdinalIgnoreCase))
             {
                 _commandHistory.Add(val);

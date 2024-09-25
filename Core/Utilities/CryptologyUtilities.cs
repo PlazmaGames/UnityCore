@@ -1,10 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace PlazmaGames.Core.Utils
 {
-    public sealed class CryptologyUtilities
+    public static class CryptologyUtilities
     {
         /// <summary>
         /// Create a MD5 hash from a string from <paramref name="input"/>.
@@ -17,6 +19,20 @@ namespace PlazmaGames.Core.Utils
                 byte[] hashBytes = md5.ComputeHash(inputBytes);
                 return hashBytes;
             }
+        }
+
+        /// <summary>
+        /// Generate the encrpytion key. This will need to be modified in the future
+        /// for better security. i.e. Key should not be equal IV. 
+        /// </summary>
+        public static void InitializesEncryptor(ref SymmetricAlgorithm key, string encryptionKey)
+        {
+            key = new DESCryptoServiceProvider();
+            var fullHash = CreateMD5(encryptionKey);
+            var keyBytes = new byte[8];
+            Array.Copy(fullHash, keyBytes, 8);
+            key.Key = keyBytes;
+            key.IV = keyBytes;
         }
     }
 }

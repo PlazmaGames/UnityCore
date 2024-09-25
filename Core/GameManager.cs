@@ -34,10 +34,15 @@ namespace PlazmaGames.Core
 		/// </summary>
 		public static TMonoSystem GetMonoSystem<TMonoSystem>() => _instance._monoSystemManager.GetMonoSystem<TMonoSystem>();
 
-		/// <summary>
-		/// Adds an event listener to an event of type TEvent
-		/// </summary>
-		public static void AddEventListener<T>(EventResponse listener) => _instance._eventManager.AddListener(typeof(T).Name, listener);
+        /// <summary>
+        /// Checks if a MonoSystem is attached to the GameManager.
+        /// </summary>
+        public static bool HasMonoSystem<TMonoSystem>() => _instance._monoSystemManager.HasMonoSystem<TMonoSystem>();
+
+        /// <summary>
+        /// Adds an event listener to an event of type TEvent
+        /// </summary>
+        public static void AddEventListener<T>(EventResponse listener) => _instance._eventManager.AddListener(typeof(T).Name, listener);
 
 		/// <summary>
 		/// Removes an event listener to an event of type TEvent

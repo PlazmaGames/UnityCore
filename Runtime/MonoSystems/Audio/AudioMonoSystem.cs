@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using PlazmaGames.Core;
 using System.Linq;
+using PlazmaGames.DataPersistence;
+using PlazmaGames.Core.Debugging;
 
 namespace PlazmaGames.Audio
 {
@@ -14,7 +16,7 @@ namespace PlazmaGames.Audio
         public AudioClip audio;
     }
 
-    public sealed class AudioMonoSystem : MonoBehaviour, IAudioMonoSystem
+    public sealed class AudioMonoSystem : MonoBehaviour, IAudioMonoSystem, IDataPersistence
     {
         [Header("Settings")]
         [Range(0f, 1f)] [SerializeField] private float _overallSound = 1.0f;
@@ -300,8 +302,58 @@ namespace PlazmaGames.Audio
             }
         }
 
+        public bool SaveData<TData>(ref TData data) where TData : GameData
+        {
+            PlazmaDebug.Log("Saving data.", "Audio", Color.green, 2);
+
+            if (data == null)
+            {
+                PlazmaDebug.LogWarning("Trying to save data but GameData is null.", "Audio", 1);
+                return false;
+            }
+
+            if (!GameManager.HasMonoSystem<IDataPersistenceMonoSystem>())
+            {
+                PlazmaDebug.LogWarning($"Trying to save data but a DataPersistenceMonoSystem is not defined.", "Audio", 1);
+                return false;
+            }
+
+            data.overallVolume = GetOverallVolume();
+            data.musicVolume = GetMusicVolume();
+            data.soundVolume = GetSfXVolume();
+            data.ambentVolume = GetAmbientVolume();
+
+            return true;
+
+        }
+
+        public bool LoadData<TData>(TData data) where TData : GameData
+        {
+            PlazmaDebug.Log("Loading data.", "Audio", Color.green, 2);
+
+            if (data == null)
+            {
+                PlazmaDebug.LogWarning("Trying to laod data but GameData is null.", "Audio", 1);
+                return false;
+            }
+
+            if (!GameManager.HasMonoSystem<IDataPersistenceMonoSystem>())
+            {
+                PlazmaDebug.LogWarning($"Trying to load data but a DataPersistenceMonoSystem is not defined.", "Audio", 1);
+                return false;
+            }
+
+            SetOverallVolume(data.overallVolume);
+            SetMusicVolume(data.musicVolume);
+            SetSfXVolume(data.soundVolume);
+            SetAmbientVolume(data.ambentVolume);
+
+            return true;
+        }
+
         private void Start()
         {
+            PlazmaDebug.Log($"Setting game volume.", "Audio", Color.green, 2);
             _audioSources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None).ToList();
             SetOverallVolume(_overallSound);
             SetSfXVolume(_sfxSound);

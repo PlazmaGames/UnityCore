@@ -12,7 +12,7 @@ using System;
 
 namespace PlazmaGames.Steam
 {
-    public class SteamMonoSystem : MonoBehaviour, ISteamMonoSystem
+    public sealed class SteamMonoSystem : MonoBehaviour, ISteamMonoSystem
     {
         [Header("Steam App Infomation")]
         [SerializeField] private bool _enableSteam = true;
