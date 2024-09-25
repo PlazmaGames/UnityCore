@@ -10,6 +10,7 @@ using System;
 using UnityEngine.InputSystem;
 using PlazmaGames.SO.Databases;
 using PlazmaGames.Core;
+using PlazmaGames.Core.Debugging;
 
 namespace PlazmaGames.UI.Views
 {
@@ -175,9 +176,18 @@ namespace PlazmaGames.UI.Views
             _closeButton.onClick.RemoveListener(Close);
         }
 
+        private void OnDebugReceieved(string log, DebugType type, Color? color, int verboseLevel)
+        {
+            Color col = color ?? type.GetColor();
+
+            if (PlazmaDebug.CanLog(verboseLevel)) PrintToCommandWindow($"<color=#{ColorUtility.ToHtmlStringRGBA(col)}>{type.GetPrefix()}</color>{log}");
+        }
+
         public override void Init()
         {
             _db.InitDatabase();
+
+            PlazmaDebug.OnDebug.AddListener(OnDebugReceieved);
 
             ResetInputField();
 
@@ -223,6 +233,7 @@ namespace PlazmaGames.UI.Views
 
         private void OnDestroy()
         {
+            PlazmaDebug.OnDebug.RemoveListener(OnDebugReceieved);
             RemoveListeners();
         }
     }

@@ -1,3 +1,4 @@
+using PlazmaGames.Core.Debugging;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,11 +16,12 @@ namespace PlazmaGames.Core.Events
                 if (_events.ContainsKey(eventID))
                 {
                     _events[eventID].Invoke(sender, data);
+                    PlazmaDebug.Log($"Called event of type {eventID}.", "Event", Color.green, 2);
                 }
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                PlazmaDebug.LogExpection(e, string.Empty, "EventSystem");
             }
         }
 
@@ -30,10 +32,12 @@ namespace PlazmaGames.Core.Events
                 GameEvent e = new GameEvent();
                 e.AddListener(listener);
                 _events.Add(eventID, e);
+                PlazmaDebug.Log($"Adding event of type {eventID}.", "Event", Color.green, 2);
             }
             else
             {
                 _events[eventID].AddListener(listener);
+                PlazmaDebug.Log($"Adding a reponse from an event of type {eventID}.", "Event", Color.green, 2);
             }
         }
 
@@ -46,10 +50,12 @@ namespace PlazmaGames.Core.Events
                 if (e.ListenerCount > 0)
                 {
                     e.RemoveListener(listener);
+                    PlazmaDebug.Log($"Removing event of type {eventID}.", "Event", Color.green, 2);
                 }
                 else
                 {
                     _events.Remove(eventID);
+                    PlazmaDebug.Log($"Removing a reponse from an event of type {eventID}.", "Event", Color.green, 2);
                 }
             }
         }

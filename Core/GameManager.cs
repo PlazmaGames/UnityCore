@@ -17,10 +17,12 @@ namespace PlazmaGames.Core
         private readonly NetworkRequestEmitter _networkEmitter = new NetworkRequestEmitter();
 
         [Header("Developer Settings")]
-        [SerializeField] protected bool _debug;
+        [SerializeField] private bool _debug;
+        [SerializeField] private int _verbose;
 
         public static GameManager Instance { get => _instance; }
-        public static bool InDebugMode { get => _instance._debug; }
+        public static bool InDebugMode { get => _instance._debug; set => _instance._debug = value; }
+        public static int VerboseLevel { get => Mathf.Max(0, _instance._verbose); set => _instance._verbose = Mathf.Max(0, value); }
 
         /// <summary>
         /// Add a MonoSystems to the GameManager. A MonoSystem takes the place of other singleton classes.
