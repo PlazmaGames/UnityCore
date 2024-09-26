@@ -22,11 +22,15 @@ namespace PlazmaGames.DataPersistence
         /// </summary>
         public void SaveGame();
 
-        public void DeleteGame(string profileName);
+        public bool IsGameLoaded();
+
+        public void DeleteGame(string profileName = "");
 
         public void SetProfileID(int profileID);
 
         public void ChangeProfile(string profileName);
+
+        public GameData GetGameData();
 
         /// <summary>
         /// Loads all profiles
