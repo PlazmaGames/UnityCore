@@ -1,9 +1,11 @@
 using PlazmaGames.Attribute;
 using PlazmaGames.Core.Debugging;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace PlazmaGames.SO
 {
@@ -71,6 +73,11 @@ namespace PlazmaGames.SO
         public List<TBase> GetAllEntries()
         {
             return new List<TBase>(_database);
+        }
+
+        public List<TBase> Where(Func<TBase, bool> pred)
+        {
+            return _database.Where(pred).ToList();
         }
 
         public TBase GetEntry(int id)

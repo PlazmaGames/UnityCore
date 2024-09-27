@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PlazmaGames.Core.Utils
+namespace PlazmaGames.ProGen.Trianglation
 {
     /// <summary>
     /// Define a 2D edge
     /// </summary>
-    public struct Edge2D
+    internal struct Edge2D
     {
         public Vector2 A, B;
         public int IndexA, IndexB;
@@ -36,7 +36,7 @@ namespace PlazmaGames.Core.Utils
     /// <summary>
     /// Define a 2D triangle
     /// </summary>
-    public struct Triangle2D
+    internal struct Triangle2D
     {
         public Vector2 A, B, C;
         public int IndexA, IndexB, IndexC;
@@ -68,7 +68,7 @@ namespace PlazmaGames.Core.Utils
     /// <summary>
     /// Define a 3D edge
     /// </summary>
-    public struct Edge3D
+    internal struct Edge3D
     {
         public Vector3 A, B;
         public int IndexA, IndexB;
@@ -97,7 +97,7 @@ namespace PlazmaGames.Core.Utils
     /// <summary>
     /// Define a 3D triangle
     /// </summary>
-    public struct Triangle3D
+    internal struct Triangle3D
     {
         public Vector3 A, B, C;
         public int IndexA, IndexB, IndexC;
@@ -135,7 +135,7 @@ namespace PlazmaGames.Core.Utils
     /// <summary>
     /// Define a tetrahedran
     /// </summary>
-    public struct Tetrahedran
+    internal struct Tetrahedran
     {
         public Vector3 A, B, C, D;
         public int IndexA, IndexB, IndexC, IndexD;
@@ -359,7 +359,7 @@ namespace PlazmaGames.Core.Utils
         /// <summary>
         /// Calculates a "super" tetrahedran enclosing all points in the vertex list
         /// </summary>
-        public Tetrahedran CalaulateSuperTetrahedran()
+        private Tetrahedran CalaulateSuperTetrahedran()
         {
             Vector3 min = new(Mathf.Infinity, Mathf.Infinity, Mathf.Infinity);
             Vector3 max = new(-Mathf.Infinity, -Mathf.Infinity, -Mathf.Infinity);
@@ -415,7 +415,7 @@ namespace PlazmaGames.Core.Utils
         /// Using the above equations for the circumcenter and circumradius we can determine if a point, pt with the following 
         /// condition:
         /// (x - x0)^2 + (y - y0)^2 + (z - z0)^2 - r^2 < 0
-        public bool IsPointInCircumball(Tetrahedran tetrahedran, Vector3 pt)
+        private bool IsPointInCircumball(Tetrahedran tetrahedran, Vector3 pt)
         {
             float dx = new Matrix4x4(
                 new Vector4(tetrahedran.A.sqrMagnitude, tetrahedran.B.sqrMagnitude, tetrahedran.C.sqrMagnitude, tetrahedran.D.sqrMagnitude),
@@ -518,7 +518,7 @@ namespace PlazmaGames.Core.Utils
         /// <summary>
         /// Checks if a two triangles have a shared face
         /// </summary>
-        public bool HasSharedTriangle(Tetrahedran triangle, Tetrahedran otherTriangle)
+        private bool HasSharedTriangle(Tetrahedran triangle, Tetrahedran otherTriangle)
         {
             return (
                 triangle.A == otherTriangle.A

@@ -27,6 +27,11 @@ namespace PlazmaGames.DataPersistence
 
         public int ProfileID {get; private set;}
 
+        public bool IsGameLoaded()
+        {
+            return _gameData != null;
+        }
+
         public void NewGame()
         {
             PlazmaDebug.Log($"Creating a new profile for {_currentProfileName}.", "Data Persistence", Color.green, 2);
@@ -71,13 +76,17 @@ namespace PlazmaGames.DataPersistence
             return FindObjectsOfType<MonoBehaviour>().OfType<IDataPersistence>().ToList();
         }
 
-        public void DeleteGame(string profileName)
+        public void DeleteGame(string profileName = "")
         {
+            if (profileName == string.Empty) profileName = _currentProfileName;
+
             PlazmaDebug.Log($"Attempting to delete {profileName}.", "Data Persistence", Color.green, 2);
 
             string path = Path.Combine(Application.dataPath, Application.persistentDataPath, profileName);
             if (Directory.Exists(path)) Directory.Delete(path, true);
             else PlazmaDebug.LogWarning($"Trying to delete path that does not exist:\n{path}", "Data Persistence", 1);
+
+            _gameData = null;
         }
 
         public void SetProfileID(int profileID)
@@ -119,6 +128,11 @@ namespace PlazmaGames.DataPersistence
             SaveGame();
         }
 
+        public GameData GetGameData()
+        {
+            return _gameData;
+        }
+
         private void AddListeners()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
@@ -148,6 +162,7 @@ namespace PlazmaGames.DataPersistence
 
         private void Awake()
         {
+            Debug.Log(Application.persistentDataPath);
             PlazmaDebug.Log($"Data Persistence Manager is Awaking.", "Data Persistence", Color.green, 2);
             _loader = new Loader(Application.persistentDataPath, _filename, _useEncryption);
         }
