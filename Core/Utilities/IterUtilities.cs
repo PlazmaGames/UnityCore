@@ -1,21 +1,58 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace PlazmaGames.Core.Utils
 {
-	public sealed class IterUtilities
+	public static class IterUtilities
 	{
-		public static void ForEach<T>(IEnumerable<T> itbl, Action<T> func)
+		public static void ForEach<T>(this IEnumerable<T> itbl, Action<T> func)
 		{
 			foreach (T t in itbl) func(t);
 		}
 
-		public static void ForEach<T>(IEnumerable<T> itbl, Action<T, int> func)
+		public static void ForEach<T>(this IEnumerable<T> itbl, Action<T, int> func)
 		{
 			int i = 0;
 			foreach (T t in itbl) func(t, i++);
+		}
+		
+		/// <summary>
+		/// returns enumerable of each index where func returns true.
+		/// </summary>
+		public static IEnumerable<int> IndexWhere<T>(this IEnumerable<T> itbl, Func<T, bool> func)
+		{
+			int i = 0;
+			foreach (T t in itbl)
+			{
+				if (func(t)) yield return i;
+				i += 1;
+			}
+		}
+		
+		/// <summary>
+		/// returns enumerable of each index where func returns true.
+		/// </summary>
+		public static IEnumerable<int> IndexWhere<T>(this IEnumerable<T> itbl, Func<T, int, bool> func)
+		{
+			int i = 0;
+			foreach (T t in itbl)
+			{
+				if (func(t, i)) yield return i;
+				i += 1;
+			}
+		}
+
+		/// <summary>
+		/// returns true if every element in baseSet is also in the enumerable
+		/// along with having the same number of duplicates.
+		/// </summary>
+		public static bool ContainsSet<T>(this IEnumerable<T> itbl, IEnumerable<T> baseSet)
+		{
+			List<T> items = itbl.ToList();
+			return baseSet.All(t => items.Remove(t));
 		}
 
 		public static void Loop2D(Vector2Int range, Func<Vector2Int, bool> func)
