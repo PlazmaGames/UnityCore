@@ -25,7 +25,7 @@ namespace PlazmaGames.Rendering.CRT
 
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
-			if (_mat == null || _rtHandle == null || _rtHandle.rt == null || renderingData.cameraData.renderer.cameraColorTargetHandle == null) return;
+			if (_mat == null || _rtHandle == null || _rtHandle.rt == null || renderingData.cameraData.renderer.cameraColorTargetHandle == null || renderingData.cameraData.renderer.cameraColorTargetHandle.rt == null) return;
 			
 			CommandBuffer cmd = CommandBufferPool.Get();
 
