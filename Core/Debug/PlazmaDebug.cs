@@ -16,7 +16,7 @@ namespace PlazmaGames.Core.Debugging
 
         public static bool CanLog(int verboseLevel)
         {
-            return GameManager.InDebugMode && GameManager.VerboseLevel >= verboseLevel;
+            return GameManager.Instance == null || (GameManager.InDebugMode && GameManager.VerboseLevel >= verboseLevel);
         }
 
         public static void Log(string msg, string quilfier = "", Color? color = null, int verboseLevel = 0)

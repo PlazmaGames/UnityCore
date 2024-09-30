@@ -24,9 +24,9 @@ namespace PlazmaGames.UI
         /// Displays a view of type T. Remeber parameter indicates if to add the view
         /// to the history or not. 
         /// </summary>
-        public void Show<T>(bool remeber = true, bool hideLastView = true) where T : View;
+        public void Show<T>(bool remeber = true, bool hideLastView = true, bool toggleLayer = true) where T : View;
 
-        public void Show(System.Type type, bool remeber = true, bool hideLastView = true);
+        public void Show(System.Type type, bool remeber = true, bool hideLastView = true, bool toggleLayer = true);
 
         /// <summary>
         /// Displays a view of type TNext After a tranition to view of type TIntermediate. 
@@ -34,10 +34,9 @@ namespace PlazmaGames.UI
         /// Remeber parameter indicates if to add the view
         /// to the history or not. 
         /// </summary>
-        public void ShowWithTransition<TNext, TIntermediate>(Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true) where TNext : View where TIntermediate : View;
-        public void ShowWithTransition(System.Type nextViewType, System.Type transitionViewType, Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true);
-
-        public void ShowLastWithTransition<TIntermediate>(Func<bool> canTransitionCallback, bool hideLastView = true) where TIntermediate : View;
+        public void ShowWithTransition<TNext, TIntermediate>(Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true, bool toggleLayer = false) where TNext : View where TIntermediate : View;
+        public void ShowWithTransition(System.Type nextViewType, System.Type transitionViewType, Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true, bool toggleLayer = false);
+        public void ShowLastWithTransition<TIntermediate>(Func<bool> canTransitionCallback, bool hideLastView = true, bool toggleLayer = false) where TIntermediate : View;
 
         /// <summary>
         /// Displays the last view in the history

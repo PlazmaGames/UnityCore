@@ -44,7 +44,34 @@ namespace PlazmaGames.UI
             return null;
         }
 
-        public void Show(System.Type type, bool remeber = true, bool hideLastView = true)
+        public void ShowWithTransition<TNext, TIntermediate>(Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true, bool toggleLayer = false) where TNext : View where TIntermediate : View
+        {
+            ShowWithTransition(typeof(TNext), typeof(TIntermediate), canTransitionCallback, remeber, hideLastView, toggleLayer);
+        }
+
+        public void ShowWithTransition(System.Type nextViewType, System.Type transitionViewType, Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true, bool toggleLayer = false)
+        {
+            if (_inTransition) return;
+
+            _viewBeforeTransition = (hideLastView) ? _currentView : null;
+            Show(transitionViewType, remeber, false, toggleLayer);
+            _inTransition = true;
+            _canTransitionCallback = canTransitionCallback;
+            _nextViewAfterTransition = nextViewType;
+        }
+
+        public void ShowLastWithTransition<TIntermediate>(Func<bool> canTransitionCallback, bool hideLastView = true, bool toggleLayer = false) where TIntermediate : View
+        {
+            if (_inTransition) return;
+
+            _viewBeforeTransition = (hideLastView) ? _currentView : null;
+            Show<TIntermediate>(false, false, toggleLayer);
+            _inTransition = true;
+            _canTransitionCallback = canTransitionCallback;
+            _nextViewAfterTransition = null;
+        }
+
+        public void Show(System.Type type, bool remeber = true, bool hideLastView = true, bool toggleLayer = true)
         {
             if (_inTransition)
             {
@@ -60,63 +87,28 @@ namespace PlazmaGames.UI
                     {
                         if (remeber) _history.Push(_currentView);
                         if (hideLastView) _currentView.Hide();
+                        if (toggleLayer) _currentView.SetLayer(false);
                     }
 
                     view.Show();
                     _currentView = view;
+                    _currentView.SetLayer(true);
                 }
             }
         }
 
-        public void ShowWithTransition<TNext, TIntermediate>(Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true) where TNext : View where TIntermediate : View
+        public void Show<T>(bool remeber = true, bool hideLastView = true, bool toggleLayer = true) where T : View
         {
-            ShowWithTransition(typeof(TNext), typeof(TIntermediate), canTransitionCallback, remeber, hideLastView);
-        }
-
-        public void ShowWithTransition(System.Type nextViewType, System.Type transitionViewType, Func<bool> canTransitionCallback, bool remeber = true, bool hideLastView = true)
-        {
-            if (_inTransition) return;
-
-            _viewBeforeTransition = (hideLastView) ? _currentView : null;
-            Show(transitionViewType, remeber, false);
-            _inTransition = true;
-            _canTransitionCallback = canTransitionCallback;
-            _nextViewAfterTransition = nextViewType;
-        }
-
-        public void ShowLastWithTransition<TIntermediate>(Func<bool> canTransitionCallback, bool hideLastView = true) where TIntermediate : View
-        {
-            if (_inTransition) return;
-
-            _viewBeforeTransition = (hideLastView) ? _currentView : null;
-            Show<TIntermediate>(false, false);
-            _inTransition = true;
-            _canTransitionCallback = canTransitionCallback;
-            _nextViewAfterTransition = null;
-        }
-
-        public void Show<T>(bool remeber = true, bool hideLastView = true) where T : View
-        {
-            Show(typeof(T), remeber, hideLastView);
+            Show(typeof(T), remeber, hideLastView, toggleLayer);
         }
 
         /// <summary>
         /// Displays a view given the view as an input. Remeber parameter indicates
         /// if to add the view to the history or not. 
         /// </summary>
-        private void Show(View view, bool remeber = true)
+        private void Show(View view, bool remeber = true, bool hideLastView = true, bool toggleLayer = true)
         {
-            if (view != null)
-            {
-                if (_currentView != null)
-                {
-                    if (remeber) _history.Push(_currentView);
-                    _currentView.Hide();
-                }
-
-                view.Show();
-                _currentView = view;
-            }
+            Show(view.GetType(), remeber, hideLastView, toggleLayer);
         }
 
         public void ShowLast()
@@ -157,6 +149,7 @@ namespace PlazmaGames.UI
             {
                 view.Init();
                 view.Hide();
+                view.SetLayer(false);
             }
 
             Type startingViewType = Type.GetType(_startingView);
