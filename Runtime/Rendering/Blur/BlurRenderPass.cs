@@ -47,6 +47,8 @@ namespace PlazmaGames.Rendering.Blur
                 return;
             }
 
+            if (_mat == null || _rtHandle == null || _rtHandle.rt == null || renderingData.cameraData.renderer.cameraColorTargetHandle == null) return;
+
             CommandBuffer cmd = CommandBufferPool.Get("Blur Post Process");
 
             int gridSize = Mathf.CeilToInt(_blurSettings.strength.value * 3.0f);

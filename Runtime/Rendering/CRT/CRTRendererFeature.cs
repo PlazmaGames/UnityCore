@@ -74,7 +74,7 @@ namespace PlazmaGames.Rendering.CRT
 			_mat.SetVector("m_screenResolution", _screenResolution);
 			_mat.SetFloat("m_vignetteOpacity", _vignetteOpacity);
 			_mat.SetVector("m_scanLineOpacity", new Vector2(_scanLineVerticalOpacity, _scanLineHoriztionalOpacity));
-			_mat.SetVector("m_scanLineSpeed", new Vector2(_scanLineHoriztionalSpeed, _scanLineVerticalSpeed));
+			_mat.SetVector("m_scanLineSpeed", new Vector2(_scanLineVerticalSpeed, _scanLineHoriztionalSpeed));
 			_mat.SetFloat("m_scanLineStrength", _scanLineStrength);
 
 			_mat.SetFloat("m_noiseSpeed", _noiseSpeed);
@@ -118,6 +118,8 @@ namespace PlazmaGames.Rendering.CRT
 
 		protected override void Dispose(bool disposing)
 		{
+			if (!disposing) return;
+
 			if (_mat != null)
 			{
 				CoreUtils.Destroy(_mat);

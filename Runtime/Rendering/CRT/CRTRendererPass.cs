@@ -13,12 +13,6 @@ namespace PlazmaGames.Rendering.CRT
 
 		public CRTRendererPass(Material mat) =>_mat = mat;
 
-		public void Destroy()
-		{
-			_rtHandle?.Release();
-			_rtHandle = null;
-		}
-
 		public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
 		{
 			cameraTextureDescriptor.depthBufferBits = (int)DepthBits.None;
@@ -31,7 +25,7 @@ namespace PlazmaGames.Rendering.CRT
 
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
-			if (_mat == null || _rtHandle == null) return;
+			if (_mat == null || _rtHandle == null || _rtHandle.rt == null || renderingData.cameraData.renderer.cameraColorTargetHandle == null) return;
 			
 			CommandBuffer cmd = CommandBufferPool.Get();
 
@@ -43,5 +37,16 @@ namespace PlazmaGames.Rendering.CRT
 			cmd.Clear();
 			cmd.Release();
 		}
-	}
+
+        public override void FrameCleanup(CommandBuffer cmd)
+        {
+            base.FrameCleanup(cmd);
+        }
+
+        public void Destroy()
+        {
+            _rtHandle?.Release();
+            _rtHandle = null;
+        }
+    }
 }
