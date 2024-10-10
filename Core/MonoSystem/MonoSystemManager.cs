@@ -6,7 +6,7 @@ namespace PlazmaGames.Core.MonoSystem
 {
     internal sealed class MonoSystemManager 
     {
-        private readonly Dictionary<Type, IMonoSystem> _monoSystems = new();
+        private readonly Dictionary<Type, IMonoSystem> _monoSystems = new Dictionary<Type, IMonoSystem>();
 
         /// <summary>
         /// Adds a MonoSystem to the master list.
@@ -15,7 +15,16 @@ namespace PlazmaGames.Core.MonoSystem
         {
             if (monoSystem == null) throw new Exception($"{nameof(monoSystem)} cannot be null!!!");
             Type monoSystemType = typeof(TBindTo);
-            _monoSystems[monoSystemType] = monoSystem;
+            if (!_monoSystems.ContainsKey(monoSystemType)) _monoSystems[monoSystemType] = monoSystem;
+        }
+
+        /// <summary>
+        /// Removes a MonoSystem to the master list.
+        /// </summary>
+        public void RemoveMonoSystem<TMonoSystem>() where TMonoSystem : IMonoSystem
+        {
+            if (HasMonoSystem<TMonoSystem>()) _monoSystems.Remove(typeof(IMonoSystem));
+            else PlazmaDebug.LogWarning($"Trying to remove MonoSystem {typeof(IMonoSystem)} which is not currently attached", "MonoSystem", 1);
         }
 
         /// <summary>
@@ -37,7 +46,7 @@ namespace PlazmaGames.Core.MonoSystem
         /// <summary>
         /// Checks if a MonoSystem is attached.
         /// </summary>
-        public bool HasMonoSystem<TMonoSystem>()
+        public bool HasMonoSystem<TMonoSystem>() where TMonoSystem : IMonoSystem
         {
             Type monoSystemType = typeof(TMonoSystem);
             return _monoSystems.ContainsKey(monoSystemType);

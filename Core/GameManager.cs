@@ -29,15 +29,21 @@ namespace PlazmaGames.Core
         /// </summary>
         public static void AddMonoSystem<TMonoSystem, TBindTo>(TMonoSystem monoSystem) where TMonoSystem : IMonoSystem, TBindTo => _instance._monoSystemManager.AddMonoSystem<TMonoSystem, TBindTo>(monoSystem);
 
-		/// <summary>
-		/// Fetches an attached MonoSystem of type TMonoSystem.
-		/// </summary>
-		public static TMonoSystem GetMonoSystem<TMonoSystem>() => _instance._monoSystemManager.GetMonoSystem<TMonoSystem>();
+        /// <summary>
+        /// Removes a MonoSystems to the GameManager. A MonoSystem takes the place of other singleton classes.
+        /// </summary>
+        public static void RemoveMonoSystem<TMonoSystem>() where TMonoSystem : IMonoSystem => _instance._monoSystemManager.RemoveMonoSystem<TMonoSystem>();
+
+
+        /// <summary>
+        /// Fetches an attached MonoSystem of type TMonoSystem.
+        /// </summary>
+        public static TMonoSystem GetMonoSystem<TMonoSystem>() => _instance._monoSystemManager.GetMonoSystem<TMonoSystem>();
 
         /// <summary>
         /// Checks if a MonoSystem is attached to the GameManager.
         /// </summary>
-        public static bool HasMonoSystem<TMonoSystem>() => _instance._monoSystemManager.HasMonoSystem<TMonoSystem>();
+        public static bool HasMonoSystem<TMonoSystem>() where TMonoSystem : IMonoSystem => _instance._monoSystemManager.HasMonoSystem<TMonoSystem>();
 
         /// <summary>
         /// Adds an event listener to an event of type TEvent
