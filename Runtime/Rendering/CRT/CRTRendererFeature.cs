@@ -5,7 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace PlazmaGames.Rendering.CRT
 {
-	internal sealed class CRTRendererFeature : ScriptableRendererFeature
+	public sealed class CRTRendererFeature : ScriptableRendererFeature
 	{
 		[Header("References")]
 		[SerializeField] private Shader _shader;
