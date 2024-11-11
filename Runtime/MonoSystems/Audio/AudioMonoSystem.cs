@@ -117,7 +117,7 @@ namespace PlazmaGames.Audio
             if (sfx == null) return;
             if (!(!allowOverlay && _ambientSource.isPlaying))
             {
-                if (!loop) PlayAmbient(sfx.audio, _overallSound * _sfxSound);
+                if (!loop) PlayAmbient(sfx.audio, _overallSound * _ambientSound);
                 else PlayAmbientLoop(sfx.audio, _overallSound * _ambientSound);
             }
         }
@@ -131,7 +131,7 @@ namespace PlazmaGames.Audio
             if (sfx == null) return;
             if (!(!allowOverlay && _ambientSource.isPlaying))
             {
-                if (!loop) PlayAmbient(sfx.audio, _overallSound * _sfxSound);
+                if (!loop) PlayAmbient(sfx.audio, _overallSound * _ambientSound);
                 else PlayAmbientLoop(sfx.audio, _overallSound * _ambientSound);
             }
         }
@@ -213,6 +213,33 @@ namespace PlazmaGames.Audio
                     break;
                 case AudioType.Sfx:
                     PlaySfx(id, allowOverlay, loop);
+                    break;
+                default:
+                    Debug.LogWarning($"{audioType} is not a vaild Audio Type.");
+                    break;
+            }
+        }
+
+        public void PlayAudio(AudioClip clip, AudioType audioType, bool loop = true, bool allowOverlay = true)
+        {
+            switch (audioType)
+            {
+                case AudioType.Music:
+                    PlayMusic(clip, _overallSound * _musicSound);
+                    break;
+                case AudioType.Ambient:
+                    if (!(!allowOverlay && _ambientSource.isPlaying))
+                    {
+                        if (!loop) PlayAmbient(clip, _overallSound * _ambientSound);
+                        else PlayAmbientLoop(clip, _overallSound * _ambientSound);
+                    }
+                    break;
+                case AudioType.Sfx:
+                    if (!(!allowOverlay && _sfxMainSource.isPlaying))
+                    {
+                        if (!loop) PlaySfx(clip, _overallSound * _sfxSound);
+                        else PlaySfxLoop(clip, _overallSound * _sfxSound);
+                    }
                     break;
                 default:
                     Debug.LogWarning($"{audioType} is not a vaild Audio Type.");
