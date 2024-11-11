@@ -78,6 +78,15 @@ namespace PlazmaGames.Core.Utils
 		}
 
 		/// <summary>
+		/// Fill an array with a single value
+		/// </summary>
+		public static void Fill<T>(this T[] arr, Func<T> val)
+		{
+			for (int i = 0; i < arr.Length; i++) arr[i] = val();
+		}
+
+
+		/// <summary>
 		/// Fill a 2D array with a single value
 		/// </summary>
 		public static void Fill<T>(this T[,] arr, T val)
@@ -87,6 +96,17 @@ namespace PlazmaGames.Core.Utils
 				for (int j = 0; j < arr.GetLength(1); j++)
 				{
 					arr[i, j] = val;
+				}
+			}
+		}
+
+		public static void Fill<T>(this T[,] arr, Func<T> val)
+		{
+			for (int i = 0; i < arr.GetLength(0); i++)
+			{
+				for (int j = 0; j < arr.GetLength(1); j++)
+				{
+					arr[i, j] = val();
 				}
 			}
 		}
@@ -101,10 +121,30 @@ namespace PlazmaGames.Core.Utils
 			return arr;
 		}
 
+				/// <summary>
+		/// Creates an array and fills it with a default value 
+		/// </summary>
+		public static T[] CreateAndFill<T>(int size, Func<T> val)
+		{
+			T[] arr = new T[size];
+			Fill(arr, val);
+			return arr;
+		}
+
 		/// <summary>
 		/// Creates a 2D array and fills it with a default value 
 		/// </summary>
 		public static T[,] CreateAndFill<T>(int sizeX, int sizeY, T val)
+		{
+			T[,] arr = new T[sizeX, sizeY];
+			Fill(arr, val);
+			return arr;
+		}
+
+		/// <summary>
+		/// Creates a 2D array and fills it with a default value 
+		/// </summary>
+		public static T[,] CreateAndFill<T>(int sizeX, int sizeY, Func<T> val)
 		{
 			T[,] arr = new T[sizeX, sizeY];
 			Fill(arr, val);

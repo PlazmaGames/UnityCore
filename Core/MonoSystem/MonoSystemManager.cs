@@ -23,7 +23,7 @@ namespace PlazmaGames.Core.MonoSystem
         /// </summary>
         public void RemoveMonoSystem<TMonoSystem>() where TMonoSystem : IMonoSystem
         {
-            if (HasMonoSystem<TMonoSystem>()) _monoSystems.Remove(typeof(IMonoSystem));
+            if (HasMonoSystem<TMonoSystem>()) _monoSystems.Remove(typeof(TMonoSystem));
             else PlazmaDebug.LogWarning($"Trying to remove MonoSystem {typeof(IMonoSystem)} which is not currently attached", "MonoSystem", 1);
         }
 

@@ -13,7 +13,7 @@ namespace PlazmaGames.Core.Events
         {
             try
             {
-                if (_events.ContainsKey(eventID))
+                if (HasEvent(eventID))
                 {
                     _events[eventID].Invoke(sender, data);
                     PlazmaDebug.Log($"Called event of type {eventID}.", "Event", Color.green, 2);
@@ -27,7 +27,7 @@ namespace PlazmaGames.Core.Events
 
         public void AddListener(string eventID, EventResponse listener)
         {
-            if (!_events.ContainsKey(eventID))
+            if (!HasEvent(eventID))
             {
                 GameEvent e = new GameEvent();
                 e.AddListener(listener);
@@ -43,7 +43,7 @@ namespace PlazmaGames.Core.Events
 
         public void RemoveListener(string eventID, EventResponse listener)
         {
-            if (_events.ContainsKey(eventID)) 
+            if (HasEvent(eventID)) 
             { 
 
                 GameEvent e = _events[eventID];
@@ -52,12 +52,18 @@ namespace PlazmaGames.Core.Events
                     e.RemoveListener(listener);
                     PlazmaDebug.Log($"Removing event of type {eventID}.", "Event", Color.green, 2);
                 }
-                else
+
+                if (e.ListenerCount <= 0)
                 {
                     _events.Remove(eventID);
                     PlazmaDebug.Log($"Removing a reponse from an event of type {eventID}.", "Event", Color.green, 2);
                 }
             }
+        }
+
+        public bool HasEvent(string eventID) 
+        {
+            return _events.ContainsKey(eventID);
         }
     }
 }

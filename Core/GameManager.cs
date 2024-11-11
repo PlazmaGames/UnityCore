@@ -48,17 +48,22 @@ namespace PlazmaGames.Core
         /// <summary>
         /// Adds an event listener to an event of type TEvent
         /// </summary>
-        public static void AddEventListener<T>(EventResponse listener) => _instance._eventManager.AddListener(typeof(T).Name, listener);
+        public static void AddEventListener<TEvent>(EventResponse listener) => _instance._eventManager.AddListener(typeof(TEvent).Name, listener);
 
 		/// <summary>
 		/// Removes an event listener to an event of type TEvent
 		/// </summary>
-		public static void RemoveEventListener<T>(EventResponse listener) => _instance._eventManager.RemoveListener(typeof(T).Name, listener);
+		public static void RemoveEventListener<TEvent>(EventResponse listener) => _instance._eventManager.RemoveListener(typeof(TEvent).Name, listener);
 
 		/// <summary>
 		/// Emits a game event of type TEvent.
 		/// </summary>
 		public static void EmitEvent(object data, Component sender = null) => _instance._eventManager.Emit(data.GetType().Name, sender, data);
+
+		/// <summary>
+		/// Checks if a game event of type TEvent exists.
+		/// </summary>
+        public static bool HasEvent<TEvent>() => _instance._eventManager.HasEvent(typeof(TEvent).Name);
 
 		/// <summary>
 		/// Emit a network request of type TRequest.
