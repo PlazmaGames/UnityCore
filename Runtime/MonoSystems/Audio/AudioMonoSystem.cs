@@ -5,6 +5,7 @@ using PlazmaGames.Core;
 using System.Linq;
 using PlazmaGames.DataPersistence;
 using PlazmaGames.Core.Debugging;
+using Codice.CM.Interfaces;
 
 namespace PlazmaGames.Audio
 {
@@ -14,6 +15,13 @@ namespace PlazmaGames.Audio
         public int id;
         public string name;
         public AudioClip audio;
+    }
+
+    [System.Serializable]
+    internal class AudioSourceInfo
+    {
+        public float vol;
+        public AudioSource src;
     }
 
     public sealed class AudioMonoSystem : MonoBehaviour, IAudioMonoSystem, IDataPersistence
@@ -33,7 +41,7 @@ namespace PlazmaGames.Audio
         [SerializeField] private AudioSource _ambientSource;
         [SerializeField] private AudioSource _sfxMainSource;
 
-        [SerializeField] private List<AudioSource> _audioSources;
+        [SerializeField] private List<AudioSourceInfo> _audioSources;
 
         /// <summary>   
         /// Private member that plays music given an audioclip and sound level between 0 and 1. 
@@ -269,7 +277,7 @@ namespace PlazmaGames.Audio
         public void SetOverallVolume(float volume)
         {
             _overallSound = volume;
-            foreach (AudioSource src in _audioSources) src.volume = _overallSound * _sfxSound;
+            foreach (AudioSourceInfo info in _audioSources) info.src.volume = info.vol * _overallSound * _sfxSound;
             _ambientSource.volume = _overallSound * _ambientSound;
             _musicSource.volume = _overallSound * _musicSound;
         }
@@ -277,7 +285,7 @@ namespace PlazmaGames.Audio
         public void SetSfXVolume(float volume)
         {
             _sfxSound = volume;
-            foreach (AudioSource src in _audioSources) src.volume = _overallSound * _sfxSound;
+            foreach (AudioSourceInfo info in _audioSources) info.src.volume = info.vol * _overallSound * _sfxSound;
             _ambientSource.volume = _overallSound * _ambientSound;
             _musicSource.volume = _overallSound * _musicSound;
         }
@@ -381,7 +389,17 @@ namespace PlazmaGames.Audio
         private void Start()
         {
             PlazmaDebug.Log($"Setting game volume.", "Audio", Color.green, 2);
-            _audioSources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None).ToList();
+
+            _audioSources = new List<AudioSourceInfo>();
+            AudioSource[] audioSrc = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+            foreach (AudioSource audioSource in audioSrc)
+            {
+                AudioSourceInfo info = new AudioSourceInfo();
+                info.src = audioSource;
+                info.vol = audioSource.volume;
+                _audioSources.Add(info);
+            }
+
             SetOverallVolume(_overallSound);
             SetSfXVolume(_sfxSound);
             SetAmbientVolume(_ambientSound);
