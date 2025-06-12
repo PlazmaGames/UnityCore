@@ -39,8 +39,8 @@ namespace PlazmaGames.Rendering.CRT
 
 		[Header("Display Parameters")]
 		[SerializeField, Range(-1, 1)] private float _brightness = 0.5f;
-		[SerializeField, Range(-5, 5)] private float _contrast = 0.5f;
-		[SerializeField, Range(-5, 5)] private float _saturation = 0.5f;
+		[SerializeField] private float _contrast = 0.5f; // , Range(-5, 5)
+        [SerializeField] private float _saturation = 0.5f; //, Range(-5, 5)
         [SerializeField, Range(0, 1)] private float _hue = 0.0f;
         [SerializeField, Range(0, 1)] private float _redShift = 0.0f;
 		[SerializeField, Range(0, 1)] private float _blueShift = 0.0f;
@@ -66,6 +66,21 @@ namespace PlazmaGames.Rendering.CRT
         {
             _noiseFade = noiseLevel;
         }
+
+		public void SetChromicOffset(float level)
+		{
+			_chromaticOffset = level;
+        }
+
+		public void SetVignetteOpacity(float val)
+		{
+			_vignetteOpacity = val;
+		}
+
+		public void SetRoundness(float val)
+		{
+			_screenRoundness = val;
+		}
 
         private void SetParameters()
 		{

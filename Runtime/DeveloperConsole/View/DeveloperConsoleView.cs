@@ -212,6 +212,9 @@ namespace PlazmaGames.UI.Views
 
             AddListeners();
 
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+
             if (_nextCommandAction != null) _nextCommandAction.performed += NextCommand;
             if (_previousCommandAction != null) _previousCommandAction.performed += PreviousCommand;
             if (_defaultCommand != null) _defaultCommand.performed += BackToDefaultCommand;
