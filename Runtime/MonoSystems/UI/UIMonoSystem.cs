@@ -1,20 +1,28 @@
+using PlazmaGames.Attribute;
+using PlazmaGames.Core.Debugging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using PlazmaGames.Attribute;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace PlazmaGames.UI
 {
     public sealed class UIMonoSystem : MonoBehaviour, IUIMonoSystem
     {
+        [Header("Settings")]
+        [SerializeField] private bool _preserveUIAcrossScenes = true;
         [SerializeField, View] private string _startingView;
-        [SerializeField] private View[] _views;
 
+        [Header("Stat")]
+        [SerializeField, ReadOnly] private View[] _views;
         [SerializeField, ReadOnly] private View _currentView;
-        private readonly Stack<View> _history = new();
+        [SerializeField, ReadOnly] private bool _hasInitialized = false;
 
+        private readonly Stack<View> _history = new();
         private bool _inTransition;
         private Func<bool> _canTransitionCallback;
         private System.Type _nextViewAfterTransition;
@@ -156,9 +164,55 @@ namespace PlazmaGames.UI
             if (startingViewType != null) Show(startingViewType, true);
         }
 
+        private void PreserveUILayer()
+        {
+            PlazmaDebug.Log("Preserving UI Layer.", "UI MonoSystem", verboseLevel: 2);
+            int uiLayer = LayerMask.NameToLayer("UI");
+            GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+
+            foreach (GameObject obj in allObjects)
+            {
+                Debug.Log($"Name: {obj.name} Layer: {obj.layer}, TargetLayer: {uiLayer}");
+                if (obj.layer == uiLayer && obj.transform.parent == null)
+                {
+                    DontDestroyOnLoad(obj);
+                }
+            }
+        }
+
+        public void Refresh()
+        {
+            _views = null;
+            _currentView = null;
+            _history.Clear();
+            _inTransition = false;
+            _nextViewAfterTransition = null;
+            _viewBeforeTransition = null;
+            _canTransitionCallback = null;
+        }
+
+        private void OnSceneLoad(Scene scene, LoadSceneMode mod)
+        {
+            if (_preserveUIAcrossScenes || !_hasInitialized) return;
+            Refresh();
+            Init();
+        }
+
         private void Start()
         {
+            if (_preserveUIAcrossScenes) PreserveUILayer();
             Init();
+            _hasInitialized = true;
+        }
+
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoad;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoad;
         }
 
         private void Update()

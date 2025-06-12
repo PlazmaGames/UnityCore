@@ -1,10 +1,12 @@
+using PlazmaGames.Attribute;
+using PlazmaGames.Core;
+using PlazmaGames.Core.Debugging;
+using PlazmaGames.DataPersistence;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using PlazmaGames.Core;
 using System.Linq;
-using PlazmaGames.DataPersistence;
-using PlazmaGames.Core.Debugging;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PlazmaGames.Audio
 {
@@ -21,6 +23,14 @@ namespace PlazmaGames.Audio
     {
         public float vol;
         public AudioSource src;
+
+        public override bool Equals(object obj)
+        {
+            if(obj == null || obj is not  AudioSourceInfo) return false;
+            AudioSourceInfo other = obj as AudioSourceInfo;
+            if(other == null) return false;
+            return src.Equals(other.src);
+        }
     }
 
     public sealed class AudioMonoSystem : MonoBehaviour, IAudioMonoSystem, IDataPersistence
@@ -41,6 +51,8 @@ namespace PlazmaGames.Audio
         [SerializeField] private AudioSource _sfxMainSource;
 
         [SerializeField] private List<AudioSourceInfo> _audioSources;
+
+        [SerializeField, ReadOnly] private bool _hasInitialized;
 
         /// <summary>   
         /// Private member that plays music given an audioclip and sound level between 0 and 1. 
@@ -385,6 +397,46 @@ namespace PlazmaGames.Audio
             return true;
         }
 
+        private void OnSceneLoad(Scene scene, LoadSceneMode mode)
+        {
+            if (!_hasInitialized) return;
+
+            AudioSource[] audioSrc = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+            foreach (AudioSource audioSource in audioSrc)
+            {
+                AudioSourceInfo info = new AudioSourceInfo();
+                info.src = audioSource;
+                info.vol = audioSource.volume;
+
+                if (!_audioSources.Contains(info))
+                {
+                    _audioSources.Add(info);
+                }
+            }
+        }
+
+        private void OnSceneUnloaded(Scene scene)
+        {
+            if (!_hasInitialized) return;
+
+            for (int i = _audioSources.Count - 1; i >= 0; i--)
+            {
+                if (_audioSources[i].src == null) _audioSources.RemoveAt(i);
+            }
+        }
+
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoad;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoad;
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+        }
+
         private void Start()
         {
             PlazmaDebug.Log($"Setting game volume.", "Audio", Color.green, 2);
@@ -403,6 +455,8 @@ namespace PlazmaGames.Audio
             SetSfXVolume(_sfxSound);
             SetAmbientVolume(_ambientSound);
             SetMusicVolume(_musicSound);
+
+            _hasInitialized = true;
         }
     }
 }
