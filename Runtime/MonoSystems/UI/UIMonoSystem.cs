@@ -172,10 +172,24 @@ namespace PlazmaGames.UI
 
             foreach (GameObject obj in allObjects)
             {
-                Debug.Log($"Name: {obj.name} Layer: {obj.layer}, TargetLayer: {uiLayer}");
                 if (obj.layer == uiLayer && obj.transform.parent == null)
                 {
                     DontDestroyOnLoad(obj);
+                }
+            }
+        }
+
+        private void DestroyUILayer()
+        {
+            PlazmaDebug.Log("Destroying UI Layer Copy.", "UI MonoSystem", verboseLevel: 2);
+            int uiLayer = LayerMask.NameToLayer("UI");
+            GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+
+            foreach (GameObject obj in allObjects)
+            {
+                if (obj.layer == uiLayer && obj.transform.parent == null && obj.scene.name != "DontDestroyOnLoad")
+                {
+                    Destroy(obj);
                 }
             }
         }
@@ -193,7 +207,12 @@ namespace PlazmaGames.UI
 
         private void OnSceneLoad(Scene scene, LoadSceneMode mod)
         {
-            if (_preserveUIAcrossScenes || !_hasInitialized) return;
+            if (!_hasInitialized) return;
+            if (_preserveUIAcrossScenes)
+            {
+                DestroyUILayer();
+                return;
+            }
             Refresh();
             Init();
         }
