@@ -55,10 +55,16 @@ namespace PlazmaGames.Core
 		/// </summary>
 		public static void RemoveEventListener<TEvent>(EventResponse listener) => _instance._eventManager.RemoveListener(typeof(TEvent).Name, listener);
 
-		/// <summary>
-		/// Emits a game event of type TEvent.
-		/// </summary>
-		public static void EmitEvent(object data, Component sender = null) => _instance._eventManager.Emit(data.GetType().Name, sender, data);
+        /// <summary>
+        /// Removes all event listeners
+        /// </summary>
+        public static void RemoveAllEventListeners() => _instance._eventManager.RemoveAllListener();
+
+
+        /// <summary>
+        /// Emits a game event of type TEvent.
+        /// </summary>
+        public static void EmitEvent(object data, Component sender = null) => _instance._eventManager.Emit(data.GetType().Name, sender, data);
 
 		/// <summary>
 		/// Checks if a game event of type TEvent exists.

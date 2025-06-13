@@ -61,6 +61,11 @@ namespace PlazmaGames.Core.Events
             }
         }
 
+        public void RemoveAllListener()
+        {
+            _events = new Dictionary<string, GameEvent>();
+        }
+
         public bool HasEvent(string eventID) 
         {
             return _events.ContainsKey(eventID);
