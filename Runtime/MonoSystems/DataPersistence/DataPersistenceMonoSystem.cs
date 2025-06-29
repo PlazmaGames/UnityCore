@@ -38,13 +38,13 @@ namespace PlazmaGames.DataPersistence
             _gameData = new TData();
         }
 
-        public void LoadGame()
+        public void LoadGame(bool forceNewGameWhenNull = false, bool trigger = true)
         {
             PlazmaDebug.Log($"Attempting to load profile {_currentProfileName}.", "Data Persistence", Color.green, 2);
 
             _gameData = _loader.Load<TData>(_currentProfileName);
 
-            if (_gameData == null && _createNewGameIfNull)
+            if (_gameData == null && (_createNewGameIfNull || forceNewGameWhenNull))
             {
                 NewGame();
             }
@@ -54,12 +54,16 @@ namespace PlazmaGames.DataPersistence
                 return;
             }
 
-            foreach (IDataPersistence obj in _dataPersistencesObjects) obj.LoadData(_gameData);
+            if (trigger) foreach (IDataPersistence obj in _dataPersistencesObjects) obj.LoadData(_gameData);
         }
 
         public void SaveGame()
         {
-            if (_gameData == null) PlazmaDebug.LogError($"TData is null. Please call NewGame() before SaveGame().", "Data Persistence", 1);
+            if (_gameData == null)
+            {
+                PlazmaDebug.LogWarning($"TData is null. Please call NewGame() before SaveGame().", "Data Persistence", 1, Color.yellow);
+                return;
+            }
 
             PlazmaDebug.Log($"Attempting to save profile {_gameData.profileID}.", "Data Persistence", Color.green, 2);
             _gameData.profileID = ProfileID;

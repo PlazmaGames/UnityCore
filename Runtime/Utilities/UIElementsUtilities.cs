@@ -109,6 +109,25 @@ namespace PlazmaGames.Core.Utils
             dropdown.AddOptions(options);
         }
 
+        public static void SetDropdownOptions(ref TMP_Dropdown dropdown, List<string> rawOptions)
+        {
+            dropdown.ClearOptions();
+
+            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+
+            if (options != null)
+            {
+                foreach (string val in rawOptions)
+                {
+                    TMP_Dropdown.OptionData option = new TMP_Dropdown.OptionData();
+                    option.text = val;
+                    options.Add(option);
+                }
+            }
+
+            dropdown.AddOptions(options);
+        }
+
         public static void SetDropdownOptions<T>(ref Dropdown dropdown, List<string> additional = null, List<T> ignore = null) where T : System.Enum
         {
             dropdown.ClearOptions();
