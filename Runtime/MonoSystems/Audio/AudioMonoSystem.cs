@@ -50,7 +50,8 @@ namespace PlazmaGames.Audio
         [SerializeField] private AudioSource _ambientSource;
         [SerializeField] private AudioSource _sfxMainSource;
 
-        [SerializeField] private List<AudioSourceInfo> _audioSources;
+        [SerializeField] private List<AudioSourceInfo> _sfxSources;
+        [SerializeField] private List<AudioSourceInfo> _musicSources;
 
         [SerializeField, ReadOnly] private bool _hasInitialized;
 
@@ -288,7 +289,8 @@ namespace PlazmaGames.Audio
         public void SetOverallVolume(float volume)
         {
             _overallSound = volume;
-            foreach (AudioSourceInfo info in _audioSources) info.src.volume = info.vol * _overallSound * _sfxSound;
+            foreach (AudioSourceInfo info in _sfxSources) info.src.volume = info.vol * _overallSound * _sfxSound;
+            foreach (AudioSourceInfo info in _musicSources) info.src.volume = info.vol * _overallSound * _musicSound;
             _ambientSource.volume = _overallSound * _ambientSound;
             _musicSource.volume = _overallSound * _musicSound;
         }
@@ -296,7 +298,7 @@ namespace PlazmaGames.Audio
         public void SetSfXVolume(float volume)
         {
             _sfxSound = volume;
-            foreach (AudioSourceInfo info in _audioSources) info.src.volume = info.vol * _overallSound * _sfxSound;
+            foreach (AudioSourceInfo info in _sfxSources) info.src.volume = info.vol * _overallSound * _sfxSound;
             _ambientSource.volume = _overallSound * _ambientSound;
             _musicSource.volume = _overallSound * _musicSound;
         }
@@ -310,6 +312,7 @@ namespace PlazmaGames.Audio
         public void SetMusicVolume(float volume)
         {
             _musicSound = volume;
+            foreach (AudioSourceInfo info in _musicSources) info.src.volume = info.vol * _overallSound * _musicSound;
             _musicSource.volume = _overallSound * _musicSound;
         }
 
@@ -408,9 +411,19 @@ namespace PlazmaGames.Audio
                 info.src = audioSource;
                 info.vol = audioSource.volume;
 
-                if (!_audioSources.Contains(info))
+                if (audioSource.CompareTag("MusicSource"))
                 {
-                    _audioSources.Add(info);
+                    if (!_musicSources.Contains(info))
+                    {
+                        _musicSources.Add(info);
+                    }
+                }
+                else
+                {
+                    if (!_sfxSources.Contains(info))
+                    {
+                        _sfxSources.Add(info);
+                    }
                 }
             }
         }
@@ -419,9 +432,9 @@ namespace PlazmaGames.Audio
         {
             if (!_hasInitialized) return;
 
-            for (int i = _audioSources.Count - 1; i >= 0; i--)
+            for (int i = _sfxSources.Count - 1; i >= 0; i--)
             {
-                if (_audioSources[i].src == null) _audioSources.RemoveAt(i);
+                if (_sfxSources[i].src == null) _sfxSources.RemoveAt(i);
             }
         }
 
@@ -441,14 +454,17 @@ namespace PlazmaGames.Audio
         {
             PlazmaDebug.Log($"Setting game volume.", "Audio", Color.green, 2);
 
-            _audioSources = new List<AudioSourceInfo>();
+            _sfxSources = new List<AudioSourceInfo>();
+            _musicSources = new List<AudioSourceInfo>();
             AudioSource[] audioSrc = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
             foreach (AudioSource audioSource in audioSrc)
             {
                 AudioSourceInfo info = new AudioSourceInfo();
                 info.src = audioSource;
                 info.vol = audioSource.volume;
-                _audioSources.Add(info);
+
+                if (audioSource.CompareTag("MusicSource")) _musicSources.Add(info);
+                else _sfxSources.Add(info);
             }
 
             SetOverallVolume(_overallSound);

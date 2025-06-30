@@ -14,9 +14,9 @@ namespace PlazmaGames.DataPersistence
 
         // Audio MonoSystem Settings
         public float overallVolume = 1;
-        public float musicVolume = 1;
-        public float soundVolume = 1;
-        public float ambentVolume = 1;
+        public float musicVolume = 0.5f;
+        public float soundVolume = 0.5f;
+        public float ambentVolume = 0.5f;
     }
 
 }
